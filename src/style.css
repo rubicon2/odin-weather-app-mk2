@@ -1,3 +1,109 @@
 :root {
+  --main-text-color: #e2e2e2;
+  --secondary-text-color: #aaaaaa;
+  --main-text-size: 32px;
+
   box-sizing: border-box;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  font-size: var(--main-text-size);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  height: 100vh;
+  background-color: rgb(14, 18, 37);
+}
+
+.weather-container {
+  height: 100%;
+  /* opacity: 0; */
+  background-image: url('https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fjw-webmagazine.com%2Fwp-content%2Fuploads%2F2019%2F06%2Fjw-5d156e02c6bbc6.98561752.jpeg&f=1&nofb=1&ipt=9faae94590c3d46086f6fd78aca334091126a7289ccf0fc1c83097ed8a3b4054&ipo=images');
+  background-size: cover;
+}
+
+.weather-info-panel {
+  height: 100%;
+  width: min-content;
+  margin-left: auto;
+  padding: 2rem;
+  /* To adjust for the box-shadow making the content look uncentered */
+  /* padding-right: 4rem; */
+
+  background-color: rgba(0, 0, 0, 0.699);
+  color: var(--main-text-color);
+
+  box-shadow: -20px 0px 50px 50px rgb(0, 0, 0, 0.699);
+
+  display: flex;
+  flex-direction: column;
+
+  transition: all 2s;
+}
+
+.location-display {
+  font-size: 2rem;
+  font-weight: bold;
+  font-style: italic;
+  align-self: flex-end;
+}
+
+.country-display {
+  color: var(--secondary-text-color);
+  font-size: 0.8rem;
+  align-self: flex-end;
+  margin-right: 0.4rem;
+  margin-bottom: 1.5rem;
+}
+
+.temperature-display {
+  color: var(--secondary-text-color);
+}
+
+.condition-display {
+  color: var(--secondary-text-color);
+}
+
+.search-bar {
+  margin-top: auto;
+  display: flex;
+}
+
+.search-bar input,
+.search-bar .search-button {
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  font-size: var(--main-text-size);
+  padding: 0.3rem 1rem;
+
+  background-color: rgba(255, 255, 255, 0.123);
+  border: none;
+
+  color: var(--secondary-text-color);
+}
+
+.search-bar > input {
+  border-radius: 50px 0 0 50px;
+  max-width: 300px;
+}
+
+.search-bar .search-button {
+  border-radius: 0 50px 50px 0;
+  cursor: pointer;
+  display: grid;
+  place-content: center;
+  opacity: 0.8;
+}
+
+.search-bar .search-button:hover {
+  opacity: 0.6;
+}
+
+.search-bar .search-button:active {
+  opacity: 0.3;
 }
