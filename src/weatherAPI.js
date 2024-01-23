@@ -48,17 +48,23 @@ function getIcon(weatherApiDataJson) {
 
 function extractWeatherData(weatherApiDataJson) {
   const obj = {};
+
   obj.location = getLocation(weatherApiDataJson);
   obj.region = getRegion(weatherApiDataJson);
   obj.country = getCountry(weatherApiDataJson);
+
   obj.condition = getCondition(weatherApiDataJson);
+
   obj.temp_c = getTempC(weatherApiDataJson);
   obj.temp_f = getTempF(weatherApiDataJson);
   obj.humidity = getHumidity(weatherApiDataJson);
+
   obj.wind_mph = getWindSpeedMph(weatherApiDataJson);
   obj.wind_kph = getWindSpeedKph(weatherApiDataJson);
+
   obj.is_day = getIsDay(weatherApiDataJson);
   obj.icon = getIcon(weatherApiDataJson);
+
   return obj;
 }
 
