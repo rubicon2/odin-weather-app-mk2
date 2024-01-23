@@ -66,7 +66,8 @@ function createInfoPanel() {
   return infoPanel;
 }
 
-async function updateWeatherDisplay(weatherObject) {
+function updateWeatherDisplay(weatherObject) {
+  // In case weatherObject is null for whatever reason, or elements not set up yet
   try {
     locationElement.innerText = weatherObject.location;
     countryElement.innerText = weatherObject.country;
