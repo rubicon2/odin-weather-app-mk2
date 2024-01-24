@@ -45,11 +45,11 @@ function fadeAndUpdateInnerText(
 }
 
 function displayWeatherDataFetchError(error) {
-  fadeAndUpdateInnerText(errorElement, 0.5, 1, error.message);
+  fadeAndUpdateInnerText(errorElement, 0.3, 1, error.message);
 }
 
 function clearWeatherDataFetchError() {
-  fadeAndUpdateInnerText(errorElement, 0.5, 1, '');
+  fadeAndUpdateInnerText(errorElement, 0.3, 1, '');
 }
 
 function createSearchBar() {
