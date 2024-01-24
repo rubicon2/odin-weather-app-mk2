@@ -153,7 +153,11 @@ function createWeatherDisplay() {
   // Contains background and info display
   const weatherDisplay = document.createElement('div');
   weatherDisplay.classList.add('weather-container');
-  backgroundElement = weatherDisplay;
+
+  const background = document.createElement('div');
+  background.classList.add('background');
+  backgroundElement = background;
+  weatherDisplay.appendChild(background);
 
   // Info panel - Takes up right side of screen, transparent background, contains text info and graphics
   weatherDisplay.appendChild(createInfoPanel());

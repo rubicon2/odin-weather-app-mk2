@@ -24,7 +24,13 @@ body {
 
 .weather-container {
   height: 100%;
-  /* opacity: 0; */
+}
+
+.background {
+  position: fixed;
+  z-index: -1;
+  height: 100%;
+  width: 100%;
   background-image: url('https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fjw-webmagazine.com%2Fwp-content%2Fuploads%2F2019%2F06%2Fjw-5d156e02c6bbc6.98561752.jpeg&f=1&nofb=1&ipt=9faae94590c3d46086f6fd78aca334091126a7289ccf0fc1c83097ed8a3b4054&ipo=images');
   background-size: cover;
 }
