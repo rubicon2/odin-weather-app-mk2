@@ -1,5 +1,6 @@
 import searchIconSrc from './search.svg';
 import { publish } from './pubsub';
+import getImage from './weatherPhotosAPI';
 
 const degreeSymbol = '\u00B0';
 
@@ -121,10 +122,19 @@ function createInfoPanel() {
   return infoPanel;
 }
 
+function setBackgroundImage(img) {
+  backgroundElement.style.backgroundImage = `url(${img})`;
+}
+
 function updateWeatherDisplay(weatherObject) {
   // In case weatherObject is null for whatever reason, or elements not set up yet
   try {
     clearWeatherDataFetchError();
+    setBackgroundImage(
+      getImage(
+        `${weatherObject.location} ${weatherObject.condition} ${weatherObject.is_day ? 'day' : 'night'}`,
+      ),
+    );
     fadeAndUpdateInnerText(locationElement, 1, 1, weatherObject.location);
     fadeAndUpdateInnerText(countryElement, 1.1, 1, weatherObject.country);
     fadeAndUpdateInnerText(
