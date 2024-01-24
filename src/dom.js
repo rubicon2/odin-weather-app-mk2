@@ -20,18 +20,18 @@ function getTemperatureStringF(temperatureF) {
   return `${temperatureF}${degreeSymbol}F`;
 }
 
-function fadeAndUpdateImage(element, fadeSeconds, targetOpacity, newImg) {
+function fadeOutAndIn(element, fadeSeconds, targetOpacity, fn) {
   /* eslint-disable no-param-reassign -- the whole point of this method is to update the properties on the element */
-  // Need named function so can removeEventListener once transition is done
+  // Need named function so can use removeEventListener on it once transition is done
   function onTransitionEnd() {
-    element.style.backgroundImage = `url(${newImg})`;
+    fn();
     element.style.opacity = targetOpacity;
     element.removeEventListener('transitionend', onTransitionEnd);
   }
   element.style.transition = `opacity ${fadeSeconds}s`;
   // eslint-disable-next-line eqeqeq -- does not perform expected comparison with strict equality or using '0'
   if (element.style.opacity == 0) {
-    element.style.backgroundImage = `url(${newImg})`;
+    fn();
     element.style.opacity = targetOpacity;
   } else {
     element.style.opacity = 0;
@@ -40,48 +40,34 @@ function fadeAndUpdateImage(element, fadeSeconds, targetOpacity, newImg) {
   /* eslint-enable no-param-reassign */
 }
 
-function fadeAndUpdateInnerText(
-  element,
-  fadeSeconds,
-  targetOpacity,
-  newInnerText,
-) {
-  /* eslint-disable no-param-reassign -- the whole point of this method is to update the properties on the element */
-  // Need named function so can removeEventListener once transition is done
-  function onTransitionEnd() {
-    element.innerText = newInnerText;
-    element.style.opacity = targetOpacity;
-    element.removeEventListener('transitionend', onTransitionEnd);
-  }
-  element.style.transition = `opacity ${fadeSeconds}s`;
-  // eslint-disable-next-line eqeqeq -- does not perform expected comparison with strict equality or using '0'
-  if (element.style.opacity == 0) {
-    element.innerText = newInnerText;
-    element.style.opacity = targetOpacity;
-  } else {
-    element.style.opacity = 0;
-    element.addEventListener('transitionend', onTransitionEnd);
-  }
+function fadeInnerText(element, innerText, fadeSeconds = 1, targetOpacity = 1) {
+  /* eslint-disable no-param-reassign */
+  fadeOutAndIn(element, fadeSeconds, targetOpacity, () => {
+    element.innerText = innerText;
+  });
   /* eslint-enable no-param-reassign */
 }
 
-function fadeAndUpdateInnerTextIfChanged(
-  element,
-  fadeSeconds,
-  targetOpacity,
-  newInnerText,
-) {
-  if (element.innerText !== newInnerText) {
-    fadeAndUpdateInnerText(element, fadeSeconds, targetOpacity, newInnerText);
-  }
+function fadeBackgroundImage(element, img, fadeSeconds = 1, targetOpacity = 1) {
+  /* eslint-disable no-param-reassign */
+  fadeOutAndIn(element, fadeSeconds, targetOpacity, () => {
+    element.style.backgroundImage = `url(${img})`;
+  });
+  /* eslint-enable no-param-reassign */
 }
 
 function displayWeatherDataFetchError(error) {
-  fadeAndUpdateInnerTextIfChanged(errorElement, 0.3, 1, error.message);
+  if (errorElement.innerText !== error.message) {
+    fadeOutAndIn(errorElement, 0.3, 1, () => {
+      errorElement.innerText = error.message;
+    });
+  }
 }
 
 function clearWeatherDataFetchError() {
-  fadeAndUpdateInnerTextIfChanged(errorElement, 0.3, 1, '');
+  fadeOutAndIn(errorElement, 0.3, 1, () => {
+    errorElement.innerText = '';
+  });
 }
 
 function createSearchBar() {
@@ -142,28 +128,24 @@ function createInfoPanel() {
   return infoPanel;
 }
 
-function setBackgroundImage(img) {
-  fadeAndUpdateImage(backgroundElement, 1, 1, img);
-}
-
 function updateWeatherDisplay(weatherObject) {
   // In case weatherObject is null for whatever reason, or elements not set up yet
   try {
     clearWeatherDataFetchError();
-    setBackgroundImage(
+    fadeBackgroundImage(
+      backgroundElement,
       getImage(
         `${weatherObject.location} ${weatherObject.condition} ${weatherObject.is_day ? 'day' : 'night'}`,
       ),
     );
-    fadeAndUpdateInnerText(locationElement, 1, 1, weatherObject.location);
-    fadeAndUpdateInnerText(countryElement, 1.1, 1, weatherObject.country);
-    fadeAndUpdateInnerText(
+    fadeInnerText(locationElement, weatherObject.location);
+    fadeInnerText(countryElement, weatherObject.country, 1.1);
+    fadeInnerText(
       temperatureElement,
-      1.3,
-      1,
       getTemperatureStringC(weatherObject.temp_c),
+      1.3,
     );
-    fadeAndUpdateInnerText(conditionElement, 1.4, 1, weatherObject.condition);
+    fadeInnerText(conditionElement, weatherObject.condition, 1.4);
   } catch (error) {
     displayWeatherDataFetchError(new Error('Data display error'));
   }
