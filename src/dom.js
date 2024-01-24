@@ -95,8 +95,14 @@ function createSearchBar() {
   searchButton.appendChild(searchIcon);
 
   searchButton.addEventListener('click', () => {
-    if (locationInput.value) publish('onLocationSubmit', locationInput.value);
-    else displayWeatherDataFetchError(new Error('Please enter a location'));
+    if (locationInput.value) {
+      // If input is same location we are already displaying, don't bother updating but don't throw any errors either
+      if (
+        locationInput.value.toLowerCase() !==
+        locationElement.innerText.toLowerCase()
+      )
+        publish('onLocationSubmit', locationInput.value);
+    } else displayWeatherDataFetchError(new Error('Please enter a location'));
   });
   searchBar.appendChild(searchButton);
 
