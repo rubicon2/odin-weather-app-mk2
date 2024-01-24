@@ -135,7 +135,6 @@ function updateWeatherDisplay(weatherObject) {
     );
     fadeAndUpdateInnerText(conditionElement, 1.4, 1, weatherObject.condition);
   } catch (error) {
-    console.log(error);
     displayWeatherDataFetchError(new Error('Data display error'));
   }
 }
