@@ -40,8 +40,6 @@ body {
   width: min-content;
   margin-left: auto;
   padding: 2rem;
-  /* To adjust for the box-shadow making the content look uncentered */
-  /* padding-right: 4rem; */
 
   background-color: rgba(0, 0, 0, 0.699);
   color: var(--main-text-color);
