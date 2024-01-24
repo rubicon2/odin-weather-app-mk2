@@ -125,10 +125,15 @@ function updateWeatherDisplay(weatherObject) {
   // In case weatherObject is null for whatever reason, or elements not set up yet
   try {
     clearWeatherDataFetchError();
-    locationElement.innerText = weatherObject.location;
-    countryElement.innerText = weatherObject.country;
-    temperatureElement.innerText = getTemperatureStringC(weatherObject.temp_c);
-    conditionElement.innerText = weatherObject.condition;
+    fadeAndUpdateInnerText(locationElement, 1, 1, weatherObject.location);
+    fadeAndUpdateInnerText(countryElement, 1.1, 1, weatherObject.country);
+    fadeAndUpdateInnerText(
+      temperatureElement,
+      1.3,
+      1,
+      getTemperatureStringC(weatherObject.temp_c),
+    );
+    fadeAndUpdateInnerText(conditionElement, 1.4, 1, weatherObject.condition);
   } catch (error) {
     console.log(error);
     displayWeatherDataFetchError(new Error('Data display error'));
