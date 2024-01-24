@@ -78,6 +78,7 @@ function createSearchBar() {
 
   searchButton.addEventListener('click', () => {
     if (locationInput.value) publish('onLocationSubmit', locationInput.value);
+    else displayWeatherDataFetchError(new Error('Please enter a location'));
   });
   searchBar.appendChild(searchButton);
 
@@ -112,12 +113,14 @@ function createInfoPanel() {
 function updateWeatherDisplay(weatherObject) {
   // In case weatherObject is null for whatever reason, or elements not set up yet
   try {
+    clearWeatherDataFetchError();
     locationElement.innerText = weatherObject.location;
     countryElement.innerText = weatherObject.country;
     temperatureElement.innerText = getTemperatureStringC(weatherObject.temp_c);
     conditionElement.innerText = weatherObject.condition;
   } catch (error) {
     console.log(error);
+    displayWeatherDataFetchError(new Error('Data display error'));
   }
 }
 

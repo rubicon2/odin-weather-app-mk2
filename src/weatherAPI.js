@@ -77,6 +77,9 @@ export default async function fetchWeatherData(locationName) {
     publish('onWeatherDataFetch', extractWeatherData(json));
   } catch (error) {
     console.error(error);
-    publish('onWeatherDataFetchError', error);
+    publish(
+      'onWeatherDataFetchError',
+      new Error('Please enter a valid location'),
+    );
   }
 }
