@@ -44,6 +44,14 @@ function fadeAndUpdateInnerText(
   /* eslint-enable no-param-reassign */
 }
 
+function displayWeatherDataFetchError(error) {
+  fadeAndUpdateInnerText(errorElement, 0.5, 1, error.message);
+}
+
+function clearWeatherDataFetchError() {
+  fadeAndUpdateInnerText(errorElement, 0.5, 1, '');
+}
+
 function createSearchBar() {
   const searchContainer = document.createElement('div');
   searchContainer.classList.add('search-container');
@@ -125,4 +133,8 @@ function createWeatherDisplay() {
   return weatherDisplay;
 }
 
-export { createWeatherDisplay, updateWeatherDisplay };
+export {
+  createWeatherDisplay,
+  updateWeatherDisplay,
+  displayWeatherDataFetchError,
+};
