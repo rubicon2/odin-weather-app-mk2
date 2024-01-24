@@ -9,6 +9,7 @@ let locationElement = null;
 let countryElement = null;
 let temperatureElement = null;
 let conditionElement = null;
+let errorElement = null;
 
 function getTemperatureStringC(temperatureC) {
   return `${temperatureC}${degreeSymbol}C`;
@@ -19,8 +20,17 @@ function getTemperatureStringF(temperatureF) {
 }
 
 function createSearchBar() {
+  const searchContainer = document.createElement('div');
+  searchContainer.classList.add('search-container');
+
+  errorElement = document.createElement('div');
+  errorElement.innerText = 'Error message';
+  errorElement.classList.add('error-display', 'transparent');
+  searchContainer.appendChild(errorElement);
+
   const searchBar = document.createElement('div');
   searchBar.classList.add('search-bar');
+  searchContainer.appendChild(searchBar);
 
   const locationInput = document.createElement('input');
   locationInput.type = 'text';
@@ -38,7 +48,7 @@ function createSearchBar() {
   });
   searchBar.appendChild(searchButton);
 
-  return searchBar;
+  return searchContainer;
 }
 
 function createInfoPanel() {

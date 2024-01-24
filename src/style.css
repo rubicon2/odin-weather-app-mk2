@@ -1,6 +1,7 @@
 :root {
   --main-text-color: #e2e2e2;
   --secondary-text-color: #aaaaaa;
+  --error-text-color: #c56d6d;
   --main-text-size: 32px;
 
   box-sizing: border-box;
@@ -70,8 +71,26 @@ body {
   color: var(--secondary-text-color);
 }
 
-.search-bar {
+.transparent {
+  opacity: 0;
+}
+
+/* To contain the error display and search bar */
+.search-container {
   margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  place-items: center;
+  gap: 0.5rem;
+}
+
+.error-display {
+  color: var(--error-text-color);
+  font-size: 0.9rem;
+  transition: all 1s;
+}
+
+.search-bar {
   display: flex;
 }
 
