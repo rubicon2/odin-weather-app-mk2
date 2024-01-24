@@ -71,10 +71,6 @@ body {
   color: var(--secondary-text-color);
 }
 
-.transparent {
-  opacity: 0;
-}
-
 /* To contain the error display and search bar */
 .search-container {
   margin-top: auto;
@@ -87,7 +83,7 @@ body {
 .error-display {
   color: var(--error-text-color);
   font-size: 0.9rem;
-  transition: all 1s;
+  opacity: 0;
 }
 
 .search-bar {
