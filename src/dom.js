@@ -20,6 +20,26 @@ function getTemperatureStringF(temperatureF) {
   return `${temperatureF}${degreeSymbol}F`;
 }
 
+function fadeAndUpdateImage(element, fadeSeconds, targetOpacity, newImg) {
+  /* eslint-disable no-param-reassign -- the whole point of this method is to update the properties on the element */
+  // Need named function so can removeEventListener once transition is done
+  function onTransitionEnd() {
+    element.style.backgroundImage = `url(${newImg})`;
+    element.style.opacity = targetOpacity;
+    element.removeEventListener('transitionend', onTransitionEnd);
+  }
+  element.style.transition = `opacity ${fadeSeconds}s`;
+  // eslint-disable-next-line eqeqeq -- does not perform expected comparison with strict equality or using '0'
+  if (element.style.opacity == 0) {
+    element.style.backgroundImage = `url(${newImg})`;
+    element.style.opacity = targetOpacity;
+  } else {
+    element.style.opacity = 0;
+    element.addEventListener('transitionend', onTransitionEnd);
+  }
+  /* eslint-enable no-param-reassign */
+}
+
 function fadeAndUpdateInnerText(
   element,
   fadeSeconds,
@@ -123,7 +143,7 @@ function createInfoPanel() {
 }
 
 function setBackgroundImage(img) {
-  backgroundElement.style.backgroundImage = `url(${img})`;
+  fadeAndUpdateImage(backgroundElement, 1, 1, img);
 }
 
 function updateWeatherDisplay(weatherObject) {
