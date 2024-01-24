@@ -37,19 +37,30 @@ function fadeAndUpdateInnerText(
   if (element.style.opacity == 0) {
     element.innerText = newInnerText;
     element.style.opacity = targetOpacity;
-  } else if (element.innerText !== newInnerText) {
+  } else {
     element.style.opacity = 0;
     element.addEventListener('transitionend', onTransitionEnd);
   }
   /* eslint-enable no-param-reassign */
 }
 
+function fadeAndUpdateInnerTextIfChanged(
+  element,
+  fadeSeconds,
+  targetOpacity,
+  newInnerText,
+) {
+  if (element.innerText !== newInnerText) {
+    fadeAndUpdateInnerText(element, fadeSeconds, targetOpacity, newInnerText);
+  }
+}
+
 function displayWeatherDataFetchError(error) {
-  fadeAndUpdateInnerText(errorElement, 0.3, 1, error.message);
+  fadeAndUpdateInnerTextIfChanged(errorElement, 0.3, 1, error.message);
 }
 
 function clearWeatherDataFetchError() {
-  fadeAndUpdateInnerText(errorElement, 0.3, 1, '');
+  fadeAndUpdateInnerTextIfChanged(errorElement, 0.3, 1, '');
 }
 
 function createSearchBar() {
