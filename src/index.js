@@ -18,13 +18,13 @@ subscribe('onWeatherDataFetchStart', () => {
 subscribe('onWeatherDataFetchSuccess', () => {
   apiTimer.end();
   console.log(
-    `Took ${apiTimer.elapsedTime} for weatherAPI to give us what we want!`,
+    `Took ${apiTimer.elapsedTime}ms for weatherAPI to give us what we want!`,
   );
 });
 subscribe('onWeatherDataFetchError', () => {
   apiTimer.end();
   console.log(
-    `Took ${apiTimer.elapsedTime} for weatherAPI to error out on us!`,
+    `Took ${apiTimer.elapsedTime}ms for weatherAPI to error out on us!`,
   );
 });
 
