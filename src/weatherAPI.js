@@ -46,12 +46,18 @@ function getIcon(weatherApiDataJson) {
   return weatherApiDataJson.current.condition.icon;
 }
 
-function extractWeatherData(weatherApiDataJson) {
+function extractLocationData(weatherApiDataJson) {
   const obj = {};
 
   obj.location = getLocation(weatherApiDataJson);
   obj.region = getRegion(weatherApiDataJson);
   obj.country = getCountry(weatherApiDataJson);
+
+  return obj;
+}
+
+function extractCurrentWeatherData(weatherApiDataJson) {
+  const obj = {};
 
   obj.condition = getCondition(weatherApiDataJson);
 
@@ -68,11 +74,48 @@ function extractWeatherData(weatherApiDataJson) {
   return obj;
 }
 
+function extractForecastDayData(forecastDay) {
+  const dayData = {};
+
+  const weekDays = ['Sun', 'Mon', 'Tues', 'Wed', 'Thurs', 'Fri', 'Sat'];
+  dayData.name = weekDays[new Date(forecastDay.date).getDay()];
+  dayData.date = forecastDay.date;
+
+  // Just to make getting these fields a bit shorter
+  const { day } = forecastDay;
+  dayData.avgtemp_c = day.avgtemp_c;
+  dayData.condition = day.condition.text;
+  dayData.icon = day.condition.icon;
+
+  return dayData;
+}
+
+function extractForecastData(weatherApiDataJson) {
+  const obj = {};
+
+  obj.days = [];
+  for (let i = 0; i < weatherApiDataJson.forecast.forecastday.length; i += 1) {
+    obj.days.push(
+      extractForecastDayData(weatherApiDataJson.forecast.forecastday[i]),
+    );
+  }
+
+  return obj;
+}
+
+function extractWeatherData(weatherApiDataJson) {
+  return {
+    ...extractLocationData(weatherApiDataJson),
+    ...extractCurrentWeatherData(weatherApiDataJson),
+    ...extractForecastData(weatherApiDataJson),
+  };
+}
+
 export default async function fetchWeatherData(locationName) {
   try {
     publish('onWeatherDataFetchStart');
     const response = await fetch(
-      `http://api.weatherapi.com/v1/current.json?key=${API_KEY}&q=${locationName}`,
+      `http://api.weatherapi.com/v1/forecast.json?key=${API_KEY}&q=${locationName}&days=7&aqi=no&alerts=no`,
     );
     const json = await response.json();
     publish('onWeatherDataFetchSuccess', extractWeatherData(json));
