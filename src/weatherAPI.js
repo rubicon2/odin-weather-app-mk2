@@ -49,7 +49,7 @@ function getIcon(weatherApiDataJson) {
 function extractLocationData(weatherApiDataJson) {
   const obj = {};
 
-  obj.location = getLocation(weatherApiDataJson);
+  obj.name = getLocation(weatherApiDataJson);
   obj.region = getRegion(weatherApiDataJson);
   obj.country = getCountry(weatherApiDataJson);
 
@@ -105,9 +105,9 @@ function extractForecastData(weatherApiDataJson) {
 
 function extractWeatherData(weatherApiDataJson) {
   return {
-    ...extractLocationData(weatherApiDataJson),
-    ...extractCurrentWeatherData(weatherApiDataJson),
-    ...extractForecastData(weatherApiDataJson),
+    location: extractLocationData(weatherApiDataJson),
+    current: extractCurrentWeatherData(weatherApiDataJson),
+    forecast: extractForecastData(weatherApiDataJson),
   };
 }
 

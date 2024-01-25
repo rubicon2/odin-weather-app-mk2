@@ -141,17 +141,17 @@ function updateWeatherDisplay(weatherObject) {
     fadeBackgroundImage(
       backgroundElement,
       getImage(
-        `${weatherObject.location} ${weatherObject.condition} ${weatherObject.is_day ? 'day' : 'night'}`,
+        `${weatherObject.location.name} ${weatherObject.current.condition} ${weatherObject.current.is_day ? 'day' : 'night'}`,
       ),
     );
-    fadeInnerText(locationElement, weatherObject.location);
-    fadeInnerText(countryElement, weatherObject.country, 1.1);
+    fadeInnerText(locationElement, weatherObject.location.name);
+    fadeInnerText(countryElement, weatherObject.location.country, 1.1);
     fadeInnerText(
       temperatureElement,
-      getTemperatureStringC(weatherObject.temp_c),
+      getTemperatureStringC(weatherObject.current.temp_c),
       1.3,
     );
-    fadeInnerText(conditionElement, weatherObject.condition, 1.4);
+    fadeInnerText(conditionElement, weatherObject.current.condition, 1.4);
   } catch (error) {
     displayWeatherDataFetchError(new Error('Data display error'));
   }
