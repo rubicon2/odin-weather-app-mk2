@@ -12,14 +12,14 @@ let currentTemperatureElement = null;
 let currentConditionElement = null;
 let errorElement = null;
 
-let forecastElements = [];
+const forecastElements = [];
 
 function getTemperatureStringC(temperatureC) {
-  return `${temperatureC}${degreeSymbol}C`;
+  return `${temperatureC || ''}${degreeSymbol}C`;
 }
 
 function getTemperatureStringF(temperatureF) {
-  return `${temperatureF}${degreeSymbol}F`;
+  return `${temperatureF || ''}${degreeSymbol}F`;
 }
 
 function fadeOutAndIn(element, fadeSeconds, targetOpacity, fn) {
