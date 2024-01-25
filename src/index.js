@@ -11,6 +11,6 @@ import './style.css';
 document.body.appendChild(createWeatherDisplay());
 
 subscribe('onLocationSubmit', fetchWeatherData);
-subscribe('onWeatherDataFetch', updateWeatherDisplay);
+subscribe('onWeatherDataFetchSuccess', updateWeatherDisplay);
 subscribe('onWeatherDataFetchError', displayWeatherDataFetchError);
 publish('onLocationSubmit', 'Sapporo');

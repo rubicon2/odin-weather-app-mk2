@@ -70,11 +70,12 @@ function extractWeatherData(weatherApiDataJson) {
 
 export default async function fetchWeatherData(locationName) {
   try {
+    publish('onWeatherDataFetchStart');
     const response = await fetch(
       `http://api.weatherapi.com/v1/current.json?key=${API_KEY}&q=${locationName}`,
     );
     const json = await response.json();
-    publish('onWeatherDataFetch', extractWeatherData(json));
+    publish('onWeatherDataFetchSuccess', extractWeatherData(json));
   } catch (error) {
     publish(
       'onWeatherDataFetchError',
