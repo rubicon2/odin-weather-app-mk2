@@ -6,11 +6,13 @@ const degreeSymbol = '\u00B0';
 
 // Store refs to the elements that will update, so we don't have to document.querySelector() every time
 let backgroundElement = null;
-let locationElement = null;
+let locationNameElement = null;
 let countryElement = null;
-let temperatureElement = null;
-let conditionElement = null;
+let currentTemperatureElement = null;
+let currentConditionElement = null;
 let errorElement = null;
+
+let forecastElements = [];
 
 function getTemperatureStringC(temperatureC) {
   return `${temperatureC}${degreeSymbol}C`;
@@ -99,7 +101,7 @@ function createSearchBar() {
       // If input is same location we are already displaying, don't bother updating but don't throw any errors either
       if (
         locationInput.value.toLowerCase() !==
-        locationElement.innerText.toLowerCase()
+        locationNameElement.innerText.toLowerCase()
       )
         publish('onLocationSubmit', locationInput.value);
     } else displayWeatherDataFetchError(new Error('Please enter a location'));
@@ -109,29 +111,114 @@ function createSearchBar() {
   return searchContainer;
 }
 
-function createInfoPanel() {
-  const infoPanel = document.createElement('div');
-  infoPanel.classList.add('weather-info-panel');
+function createLocationElement() {
+  const locationElement = document.createElement('div');
+  locationElement.classList.add('location-header');
 
-  locationElement = document.createElement('div');
-  locationElement.classList.add('location-display');
-  infoPanel.appendChild(locationElement);
+  locationNameElement = document.createElement('div');
+  locationNameElement.classList.add('location-display');
+  locationElement.appendChild(locationNameElement);
 
   countryElement = document.createElement('div');
   countryElement.classList.add('country-display');
-  infoPanel.appendChild(countryElement);
+  locationElement.appendChild(countryElement);
 
-  temperatureElement = document.createElement('div');
-  temperatureElement.classList.add('temperature-display');
-  infoPanel.appendChild(temperatureElement);
+  return locationElement;
+}
 
-  conditionElement = document.createElement('div');
-  conditionElement.classList.add('condition-display');
-  infoPanel.appendChild(conditionElement);
+function createCurrentWeatherPanel() {
+  const currentWeatherPanel = document.createElement('div');
+  currentWeatherPanel.classList.add('current-weather-panel');
 
+  currentTemperatureElement = document.createElement('div');
+  currentTemperatureElement.classList.add('temperature-display');
+  currentWeatherPanel.appendChild(currentTemperatureElement);
+
+  currentConditionElement = document.createElement('div');
+  currentConditionElement.classList.add('condition-display');
+  currentWeatherPanel.appendChild(currentConditionElement);
+
+  return currentWeatherPanel;
+}
+
+function createWeatherForecastDayInfo() {
+  const forecastDayElement = document.createElement('div');
+  forecastDayElement.classList.add('forecast-day');
+
+  const weekdayElement = document.createElement('div');
+  weekdayElement.classList.add('forecast-weekday');
+  forecastDayElement.appendChild(weekdayElement);
+
+  const temperatureElement = document.createElement('div');
+  temperatureElement.classList.add('forecast-temperature');
+  forecastDayElement.appendChild(temperatureElement);
+
+  const conditionElement = document.createElement('img');
+  conditionElement.classList.add('forecast-condition');
+  forecastDayElement.appendChild(conditionElement);
+
+  forecastElements.push({
+    weekday: weekdayElement,
+    temperature: temperatureElement,
+    condition: conditionElement,
+  });
+
+  return forecastDayElement;
+}
+
+function createWeatherForecastPanel() {
+  const weatherForecastPanel = document.createElement('div');
+  weatherForecastPanel.classList.add('weather-forecast-panel');
+
+  for (let i = 0; i < 7; i += 1) {
+    weatherForecastPanel.appendChild(createWeatherForecastDayInfo());
+  }
+
+  return weatherForecastPanel;
+}
+
+function createInfoPanel() {
+  const infoPanel = document.createElement('div');
+  infoPanel.classList.add('side-panel');
+
+  infoPanel.appendChild(createLocationElement());
+
+  const weatherPanel = document.createElement('div');
+  weatherPanel.classList.add('weather-panel');
+  infoPanel.appendChild(weatherPanel);
+
+  weatherPanel.appendChild(createCurrentWeatherPanel());
+  weatherPanel.appendChild(createWeatherForecastPanel());
   infoPanel.appendChild(createSearchBar());
 
   return infoPanel;
+}
+
+function updateLocation(weatherObject) {
+  fadeInnerText(locationNameElement, weatherObject.location.name);
+  fadeInnerText(countryElement, weatherObject.location.country, 1.1);
+}
+
+function updateCurrentWeather(weatherObject) {
+  fadeInnerText(
+    currentTemperatureElement,
+    getTemperatureStringC(weatherObject.current.temp_c),
+    1.3,
+  );
+  fadeInnerText(currentConditionElement, weatherObject.current.condition, 1.4);
+}
+
+function updateForecast(weatherObject) {
+  for (let i = 0; i < forecastElements.length; i += 1) {
+    const dayElements = forecastElements[i];
+    const dayForecast = weatherObject.forecast[i];
+
+    dayElements.weekday.innerText = dayForecast.name;
+    dayElements.temperature.innerText = getTemperatureStringC(
+      dayForecast.avgtemp_c,
+    );
+    dayElements.condition.src = dayForecast.icon;
+  }
 }
 
 function updateWeatherDisplay(weatherObject) {
@@ -144,15 +231,11 @@ function updateWeatherDisplay(weatherObject) {
         `${weatherObject.location.name} ${weatherObject.current.condition} ${weatherObject.current.is_day ? 'day' : 'night'}`,
       ),
     );
-    fadeInnerText(locationElement, weatherObject.location.name);
-    fadeInnerText(countryElement, weatherObject.location.country, 1.1);
-    fadeInnerText(
-      temperatureElement,
-      getTemperatureStringC(weatherObject.current.temp_c),
-      1.3,
-    );
-    fadeInnerText(conditionElement, weatherObject.current.condition, 1.4);
+    updateLocation(weatherObject);
+    updateCurrentWeather(weatherObject);
+    updateForecast(weatherObject);
   } catch (error) {
+    console.log(error);
     displayWeatherDataFetchError(new Error('Data display error'));
   }
 }

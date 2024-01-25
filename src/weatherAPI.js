@@ -91,16 +91,15 @@ function extractForecastDayData(forecastDay) {
 }
 
 function extractForecastData(weatherApiDataJson) {
-  const obj = {};
+  const days = [];
 
-  obj.days = [];
   for (let i = 0; i < weatherApiDataJson.forecast.forecastday.length; i += 1) {
-    obj.days.push(
+    days.push(
       extractForecastDayData(weatherApiDataJson.forecast.forecastday[i]),
     );
   }
 
-  return obj;
+  return days;
 }
 
 function extractWeatherData(weatherApiDataJson) {
