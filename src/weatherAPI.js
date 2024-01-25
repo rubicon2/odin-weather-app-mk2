@@ -120,6 +120,7 @@ export default async function fetchWeatherData(locationName) {
     const json = await response.json();
     publish('onWeatherDataFetchSuccess', extractWeatherData(json));
   } catch (error) {
+    console.log(error);
     if (!window.navigator.onLine)
       publish('onWeatherDataFetchError', new Error('No internet connection'));
     else
