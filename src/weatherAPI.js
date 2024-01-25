@@ -84,6 +84,7 @@ function extractForecastDayData(forecastDay) {
   // Just to make getting these fields a bit shorter
   const { day } = forecastDay;
   dayData.avgtemp_c = day.avgtemp_c;
+  dayData.avgtemp_f = day.avgtemp_f;
   dayData.condition = day.condition.text;
   dayData.icon = day.condition.icon;
 
