@@ -213,7 +213,10 @@ function updateForecast(weatherObject) {
     const dayElements = forecastElements[i];
     const dayForecast = weatherObject.forecast[i];
 
-    dayElements.weekday.innerText = dayForecast.name;
+    if (i === 0) dayElements.weekday.innerText = 'Today';
+    else if (i === 1) dayElements.weekday.innerText = 'Tomorrow';
+    else dayElements.weekday.innerText = dayForecast.name;
+
     dayElements.temperature.innerText = getTemperatureStringC(
       dayForecast.avgtemp_c,
     );
