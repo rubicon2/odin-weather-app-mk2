@@ -1,11 +1,19 @@
 import searchIconSrc from './search.svg';
 import { publish } from './pubsub';
 import getImage from './weatherPhotosAPI';
-import { fadeOutAndIn, fadeInnerText, fadeBackgroundImage } from './domFade';
+import {
+  fade,
+  fadeOutAndIn,
+  fadeInnerText,
+  fadeBackgroundImage,
+} from './domFade';
 
 const degreeSymbol = '\u00B0';
 
 // Store refs to the elements that will update, so we don't have to document.querySelector() every time
+let currentWeatherPanel = null;
+let weatherForecastPanel = null;
+
 let backgroundElement = null;
 let locationNameElement = null;
 let countryElement = null;
@@ -25,6 +33,16 @@ function getTemperatureStringC(temperatureC) {
 
 function getTemperatureStringF(temperatureF) {
   return `${temperatureF || ''}${degreeSymbol}F`;
+}
+
+async function showForecastPanel() {
+  await fade(currentWeatherPanel, 1, 0);
+  await fade(weatherForecastPanel, 1, 1);
+}
+
+async function showCurrentPanel() {
+  await fade(weatherForecastPanel, 1, 0);
+  await fade(currentWeatherPanel, 1, 1);
 }
 
 function displayWeatherDataFetchError(error) {
@@ -114,34 +132,34 @@ function createWeatherPanelRow(titleText, ...infoElements) {
 }
 
 function createCurrentWeatherPanel() {
-  const currentWeatherPanel = document.createElement('div');
-  currentWeatherPanel.classList.add('weather-panel-content');
+  const currentWeatherPanelElement = document.createElement('div');
+  currentWeatherPanelElement.classList.add('weather-panel-content');
 
   currentTemperatureElement = document.createElement('span');
   currentTemperatureElement.classList.add('temperature-display');
-  currentWeatherPanel.appendChild(
+  currentWeatherPanelElement.appendChild(
     createWeatherPanelRow('Average', currentTemperatureElement),
   );
 
   currentConditionElement = document.createElement('div');
   currentConditionElement.classList.add('condition-display');
-  currentWeatherPanel.appendChild(
+  currentWeatherPanelElement.appendChild(
     createWeatherPanelRow('Condition', currentConditionElement),
   );
 
   currentHumidityElement = document.createElement('div');
   currentHumidityElement.classList.add('humidity-display');
-  currentWeatherPanel.appendChild(
+  currentWeatherPanelElement.appendChild(
     createWeatherPanelRow('Humidity', currentHumidityElement),
   );
 
   currentWindElement = document.createElement('div');
   currentWindElement.classList.add('wind-display');
-  currentWeatherPanel.appendChild(
+  currentWeatherPanelElement.appendChild(
     createWeatherPanelRow('Wind', currentWindElement),
   );
 
-  return currentWeatherPanel;
+  return currentWeatherPanelElement;
 }
 
 function createWeatherForecastDayInfo() {
@@ -154,29 +172,32 @@ function createWeatherForecastDayInfo() {
   const conditionElement = document.createElement('img');
   conditionElement.classList.add('forecast-condition');
 
-  forecastElements.push({
-    weekday: weekdayElement,
-    temperature: temperatureElement,
-    condition: conditionElement,
-  });
-
-  return createWeatherPanelRow(
+  const rowElement = createWeatherPanelRow(
     null,
     weekdayElement,
     temperatureElement,
     conditionElement,
   );
+
+  forecastElements.push({
+    row: rowElement,
+    weekday: weekdayElement,
+    temperature: temperatureElement,
+    condition: conditionElement,
+  });
+
+  return rowElement;
 }
 
 function createWeatherForecastPanel() {
-  const weatherForecastPanel = document.createElement('div');
-  weatherForecastPanel.classList.add('weather-panel-content');
+  const weatherForecastPanelElement = document.createElement('div');
+  weatherForecastPanelElement.classList.add('weather-panel-content');
 
   for (let i = 0; i < 7; i += 1) {
-    weatherForecastPanel.appendChild(createWeatherForecastDayInfo());
+    weatherForecastPanelElement.appendChild(createWeatherForecastDayInfo());
   }
 
-  return weatherForecastPanel;
+  return weatherForecastPanelElement;
 }
 
 function createInfoPanel() {
@@ -189,8 +210,11 @@ function createInfoPanel() {
   weatherPanel.classList.add('weather-panel');
   infoPanel.appendChild(weatherPanel);
 
-  weatherPanel.appendChild(createCurrentWeatherPanel());
-  weatherPanel.appendChild(createWeatherForecastPanel());
+  currentWeatherPanel = createCurrentWeatherPanel();
+  weatherPanel.appendChild(currentWeatherPanel);
+
+  weatherForecastPanel = createWeatherForecastPanel();
+  weatherPanel.appendChild(weatherForecastPanel);
   infoPanel.appendChild(createSearchBar());
 
   return infoPanel;
@@ -216,23 +240,31 @@ function updateCurrentWeather(weatherObject) {
   );
 }
 
+async function updateForecastRow(dayElements, dayForecast, fadeDuration) {
+  /* eslint-disable no-param-reassign */
+  await fade(dayElements.row, fadeDuration, 0);
+  dayElements.weekday.innerText = dayForecast.name;
+  dayElements.temperature.innerText = getTemperatureStringC(
+    dayForecast.avgtemp_c,
+  );
+  dayElements.condition.src = dayForecast.icon;
+  fade(dayElements.row, fadeDuration, 1);
+  /* eslint-enable no-param-reassign */
+}
+
 function updateForecast(weatherObject) {
   for (let i = 0; i < forecastElements.length; i += 1) {
+    const fadeDuration = 1 + i * 0.2;
     const dayElements = forecastElements[i];
     const dayForecast = weatherObject.forecast[i];
 
-    if (i === 0) dayElements.weekday.innerText = 'Today';
-    else if (i === 1) dayElements.weekday.innerText = 'Tomorrow';
-    else dayElements.weekday.innerText = dayForecast.name;
-
-    dayElements.temperature.innerText = getTemperatureStringC(
-      dayForecast.avgtemp_c,
-    );
-    dayElements.condition.src = dayForecast.icon;
+    if (i === 0) dayForecast.name = 'Today';
+    else if (i === 1) dayForecast.name = 'Tomorrow';
+    updateForecastRow(dayElements, dayForecast, fadeDuration);
   }
 }
 
-function updateWeatherDisplay(weatherObject) {
+async function updateWeatherDisplay(weatherObject) {
   // In case weatherObject is null for whatever reason, or elements not set up yet
   try {
     clearWeatherDataFetchError();
@@ -242,7 +274,11 @@ function updateWeatherDisplay(weatherObject) {
         `${weatherObject.location.name} ${weatherObject.current.condition} ${weatherObject.current.is_day ? 'day' : 'night'}`,
       ),
     );
+
     updateLocation(weatherObject);
+
+    showForecastPanel();
+    // showCurrentPanel();
     updateCurrentWeather(weatherObject);
     updateForecast(weatherObject);
   } catch (error) {
@@ -270,5 +306,7 @@ function createWeatherDisplay() {
 export {
   createWeatherDisplay,
   updateWeatherDisplay,
+  showCurrentPanel,
+  showForecastPanel,
   displayWeatherDataFetchError,
 };
