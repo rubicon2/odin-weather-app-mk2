@@ -14,20 +14,37 @@ function fade(element, fadeSeconds, targetOpacity, fn) {
 }
 
 async function fadeOutAndIn(element, fadeSeconds, targetOpacity, fn) {
-  await fade(element, fadeSeconds, 0);
-  fn();
-  await fade(element, fadeSeconds, targetOpacity);
+  return new Promise((resolve) => {
+    fade(element, fadeSeconds, 0)
+      .then(() => {
+        fn();
+      })
+      .then(() => {
+        fade(element, fadeSeconds, targetOpacity);
+      })
+      .then(() => {
+        resolve();
+      });
+  });
 }
 
 function fadeInnerText(element, innerText, fadeSeconds = 1, targetOpacity = 1) {
-  fadeOutAndIn(element, fadeSeconds, targetOpacity, () => {
-    element.innerText = innerText;
+  return new Promise((resolve) => {
+    fadeOutAndIn(element, fadeSeconds, targetOpacity, () => {
+      element.innerText = innerText;
+    }).then(() => {
+      resolve();
+    });
   });
 }
 
 function fadeBackgroundImage(element, img, fadeSeconds = 1, targetOpacity = 1) {
-  fadeOutAndIn(element, fadeSeconds, targetOpacity, () => {
-    element.style.backgroundImage = `url(${img})`;
+  return new Promise((resolve) => {
+    fadeOutAndIn(element, fadeSeconds, targetOpacity, () => {
+      element.style.backgroundImage = `url(${img})`;
+    }).then(() => {
+      resolve();
+    });
   });
 }
 
