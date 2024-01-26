@@ -235,6 +235,17 @@ function updateLocation(weatherObject) {
   fadeInnerText(countryElement, weatherObject.location.country, 1.1);
 }
 
+async function updateCurrentWeatherRow(
+  rowElement,
+  elementToUpdate,
+  updatedInfo,
+  fadeDuration,
+) {
+  await fade(rowElement, fadeDuration, 0);
+  elementToUpdate.innerText = updatedInfo;
+  await fade(rowElement, fadeDuration, 1);
+}
+
 function updateCurrentWeather(weatherObject) {
   fadeInnerText(
     currentTemperatureElement,
@@ -285,8 +296,8 @@ async function updateWeatherDisplay(weatherObject) {
 
     updateLocation(weatherObject);
 
-    showForecastPanel();
-    // showCurrentPanel();
+    // showForecastPanel();
+    showCurrentPanel();
     updateCurrentWeather(weatherObject);
     updateForecast(weatherObject);
   } catch (error) {

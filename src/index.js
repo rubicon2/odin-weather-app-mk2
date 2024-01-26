@@ -34,8 +34,8 @@ subscribe('onWeatherDataFetchError', displayWeatherDataFetchError);
 publish('onLocationSubmit', 'Sapporo');
 
 // Testing panel transitions
-let snowy = false;
-setInterval(() => {
-  publish('onLocationSubmit', snowy ? 'Sapporo' : 'London');
-  snowy = !snowy;
-}, 10000);
+// let snowy = false;
+// setInterval(() => {
+//   publish('onLocationSubmit', snowy ? 'Sapporo' : 'London');
+//   snowy = !snowy;
+// }, 10000);
