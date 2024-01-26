@@ -74,6 +74,7 @@ function createSearchBar() {
 
   const locationInput = document.createElement('input');
   locationInput.type = 'text';
+  locationInput.placeholder = 'Search...';
   searchBar.appendChild(locationInput);
 
   const searchButton = document.createElement('div');
