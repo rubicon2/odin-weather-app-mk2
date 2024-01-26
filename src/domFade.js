@@ -1,20 +1,22 @@
 /* eslint-disable no-param-reassign -- the whole point of this method is to update the properties on the element */
 function fade(element, fadeSeconds, targetOpacity, fn) {
-  function onTransitionEnd() {
-    if (fn) fn();
-    element.removeEventListener('transitionend', onTransitionEnd);
-  }
+  return new Promise((resolve) => {
+    function onTransitionEnd() {
+      if (fn) fn();
+      element.removeEventListener('transitionend', onTransitionEnd);
+      resolve();
+    }
 
-  element.style.transition = `opacity ${fadeSeconds}s`;
-  element.style.opacity = targetOpacity;
-  element.addEventListener('transitionend', onTransitionEnd);
+    element.style.transition = `opacity ${fadeSeconds}s`;
+    element.style.opacity = targetOpacity;
+    element.addEventListener('transitionend', onTransitionEnd);
+  });
 }
 
-function fadeOutAndIn(element, fadeSeconds, targetOpacity, fn) {
-  fade(element, fadeSeconds, 0, () => {
-    fn();
-    fade(element, fadeSeconds, targetOpacity);
-  });
+async function fadeOutAndIn(element, fadeSeconds, targetOpacity, fn) {
+  await fade(element, fadeSeconds, 0);
+  fn();
+  await fade(element, fadeSeconds, targetOpacity);
 }
 
 function fadeInnerText(element, innerText, fadeSeconds = 1, targetOpacity = 1) {
@@ -29,4 +31,4 @@ function fadeBackgroundImage(element, img, fadeSeconds = 1, targetOpacity = 1) {
   });
 }
 
-export { fadeOutAndIn, fadeInnerText, fadeBackgroundImage };
+export { fade, fadeOutAndIn, fadeInnerText, fadeBackgroundImage };
