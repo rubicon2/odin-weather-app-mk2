@@ -169,6 +169,15 @@ function createWeatherForecastDayInfo() {
   const temperatureElement = document.createElement('div');
   temperatureElement.classList.add('forecast-temperature');
 
+  const tempReadingElement = document.createElement('span');
+  tempReadingElement.classList.add('forecast-temperature-reading');
+  temperatureElement.appendChild(tempReadingElement);
+
+  const tempUnitElement = document.createElement('span');
+  tempUnitElement.classList.add('forecast-temperature-unit');
+  tempUnitElement.innerText = getTemperatureStringC('');
+  temperatureElement.appendChild(tempUnitElement);
+
   const conditionElement = document.createElement('img');
   conditionElement.classList.add('forecast-condition');
 
@@ -182,7 +191,7 @@ function createWeatherForecastDayInfo() {
   forecastElements.push({
     row: rowElement,
     weekday: weekdayElement,
-    temperature: temperatureElement,
+    temperature: tempReadingElement,
     condition: conditionElement,
   });
 
@@ -244,9 +253,7 @@ async function updateForecastRow(dayElements, dayForecast, fadeDuration) {
   /* eslint-disable no-param-reassign */
   await fade(dayElements.row, fadeDuration, 0);
   dayElements.weekday.innerText = dayForecast.name;
-  dayElements.temperature.innerText = getTemperatureStringC(
-    dayForecast.avgtemp_c,
-  );
+  dayElements.temperature.innerText = dayForecast.avgtemp_c;
   dayElements.condition.src = dayForecast.icon;
   fade(dayElements.row, fadeDuration, 1);
   /* eslint-enable no-param-reassign */

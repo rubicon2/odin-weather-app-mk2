@@ -99,6 +99,13 @@ body {
 }
 
 .forecast-temperature {
+  display: flex;
+}
+
+.forecast-temperature-unit {
+  color: var(--secondary-text-color);
+  font-size: 0.8rem;
+  align-self: flex-start;
 }
 
 .forecast-condition {
