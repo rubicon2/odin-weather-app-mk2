@@ -146,34 +146,32 @@ function createWeatherPanelRow(titleText, ...infoElements) {
 
 function createCurrentWeatherPanel() {
   const currentWeatherPanel = document.createElement('div');
-  currentWeatherPanel.classList.add('current-weather-panel');
+  currentWeatherPanel.classList.add('weather-panel-content');
 
-  currentTemperatureElement = document.createElement('div');
+  currentTemperatureElement = document.createElement('span');
   currentTemperatureElement.classList.add('temperature-display');
-  currentWeatherPanel.appendChild(currentTemperatureElement);
+  currentWeatherPanel.appendChild(
+    createWeatherPanelRow('Average', currentTemperatureElement),
+  );
 
   currentConditionElement = document.createElement('div');
   currentConditionElement.classList.add('condition-display');
-  currentWeatherPanel.appendChild(currentConditionElement);
+  currentWeatherPanel.appendChild(
+    createWeatherPanelRow('Condition', currentConditionElement),
+  );
 
   return currentWeatherPanel;
 }
 
 function createWeatherForecastDayInfo() {
-  const forecastDayElement = document.createElement('div');
-  forecastDayElement.classList.add('forecast-day');
-
   const weekdayElement = document.createElement('div');
-  weekdayElement.classList.add('forecast-weekday');
-  forecastDayElement.appendChild(weekdayElement);
+  weekdayElement.classList.add('weather-panel-row-title');
 
   const temperatureElement = document.createElement('div');
   temperatureElement.classList.add('forecast-temperature');
-  forecastDayElement.appendChild(temperatureElement);
 
   const conditionElement = document.createElement('img');
   conditionElement.classList.add('forecast-condition');
-  forecastDayElement.appendChild(conditionElement);
 
   forecastElements.push({
     weekday: weekdayElement,
@@ -181,12 +179,17 @@ function createWeatherForecastDayInfo() {
     condition: conditionElement,
   });
 
-  return forecastDayElement;
+  return createWeatherPanelRow(
+    null,
+    weekdayElement,
+    temperatureElement,
+    conditionElement,
+  );
 }
 
 function createWeatherForecastPanel() {
   const weatherForecastPanel = document.createElement('div');
-  weatherForecastPanel.classList.add('weather-forecast-panel');
+  weatherForecastPanel.classList.add('weather-panel-content');
 
   for (let i = 0; i < 7; i += 1) {
     weatherForecastPanel.appendChild(createWeatherForecastDayInfo());
