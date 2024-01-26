@@ -90,10 +90,14 @@ body {
   /* gap: 1rem; */
 }
 
-.forecast-day {
+.weather-panel-row {
   display: flex;
   align-items: center;
   gap: 1rem;
+}
+
+.weather-panel-row-title {
+  margin-right: auto;
 }
 
 .forecast-temperature {
