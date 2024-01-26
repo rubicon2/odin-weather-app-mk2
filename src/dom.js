@@ -8,8 +8,12 @@ const degreeSymbol = '\u00B0';
 let backgroundElement = null;
 let locationNameElement = null;
 let countryElement = null;
+
 let currentTemperatureElement = null;
 let currentConditionElement = null;
+let currentHumidityElement = null;
+let currentWindElement = null;
+
 let errorElement = null;
 
 const forecastElements = [];
@@ -30,6 +34,7 @@ function fadeOutAndIn(element, fadeSeconds, targetOpacity, fn) {
     element.style.opacity = targetOpacity;
     element.removeEventListener('transitionend', onTransitionEnd);
   }
+
   element.style.transition = `opacity ${fadeSeconds}s`;
   // eslint-disable-next-line eqeqeq -- does not perform expected comparison with strict equality or using '0'
   if (element.style.opacity == 0) {
@@ -160,6 +165,18 @@ function createCurrentWeatherPanel() {
     createWeatherPanelRow('Condition', currentConditionElement),
   );
 
+  currentHumidityElement = document.createElement('div');
+  currentHumidityElement.classList.add('humidity-display');
+  currentWeatherPanel.appendChild(
+    createWeatherPanelRow('Humidity', currentHumidityElement),
+  );
+
+  currentWindElement = document.createElement('div');
+  currentWindElement.classList.add('wind-display');
+  currentWeatherPanel.appendChild(
+    createWeatherPanelRow('Wind', currentWindElement),
+  );
+
   return currentWeatherPanel;
 }
 
@@ -227,6 +244,12 @@ function updateCurrentWeather(weatherObject) {
     1.3,
   );
   fadeInnerText(currentConditionElement, weatherObject.current.condition, 1.4);
+  fadeInnerText(currentHumidityElement, weatherObject.current.humidity, 1.5);
+  fadeInnerText(
+    currentWindElement,
+    `${weatherObject.current.wind_mph}MPH`,
+    1.6,
+  );
 }
 
 function updateForecast(weatherObject) {
