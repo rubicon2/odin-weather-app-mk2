@@ -1,18 +1,15 @@
 /* eslint-disable no-param-reassign -- the whole point of this method is to update the properties on the element */
-function onTransitionEnd(fn, resolve) {
-  if (fn) fn();
-  this.removeEventListener('transitionend', onTransitionEnd);
-  resolve();
-}
-
 function fade(element, fadeSeconds, targetOpacity, fn) {
   return new Promise((resolve) => {
+    function onTransitionEnd() {
+      if (fn) fn();
+      this.removeEventListener('transitionend', onTransitionEnd);
+      resolve();
+    }
+
     element.style.transition = `opacity ${fadeSeconds}s`;
     element.style.opacity = targetOpacity;
-    element.addEventListener(
-      'transitionend',
-      onTransitionEnd.bind(element, fn, resolve),
-    );
+    element.addEventListener('transitionend', onTransitionEnd);
   });
 }
 
