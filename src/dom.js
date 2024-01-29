@@ -255,6 +255,10 @@ function updateCurrentWeather(weatherObject) {
   fadeInnerText(currentWindElement, weatherObject.current.wind_mph, 1.6);
 }
 
+function updateCurrentWeather2(weatherObject) {
+  // Get all the rows, or store refs to them
+}
+
 async function updateForecastRow(dayElements, dayForecast, fadeDuration) {
   /* eslint-disable no-param-reassign */
   await fade(dayElements.row, fadeDuration, 0);
@@ -292,8 +296,8 @@ async function updateWeatherDisplay(weatherObject) {
 
     updateLocation(weatherObject);
 
-    // showForecastPanel();
-    showCurrentPanel();
+    showForecastPanel();
+    // showCurrentPanel();
     updateCurrentWeather(weatherObject);
     updateForecast(weatherObject);
   } catch (error) {
