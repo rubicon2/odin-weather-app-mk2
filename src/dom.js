@@ -27,14 +27,6 @@ let errorElement = null;
 
 const forecastElements = [];
 
-function getTemperatureStringC(temperatureC) {
-  return `${temperatureC || ''}${degreeSymbol}C`;
-}
-
-function getTemperatureStringF(temperatureF) {
-  return `${temperatureF || ''}${degreeSymbol}F`;
-}
-
 async function showForecastPanel() {
   await fade(currentWeatherPanel, 1, 0);
   await fade(weatherForecastPanel, 1, 1);
@@ -255,23 +247,21 @@ async function updateCurrentWeatherRow(
 function updateCurrentWeather(weatherObject) {
   fadeInnerText(
     currentTemperatureElement,
-    getTemperatureStringC(weatherObject.current.temp_c),
+    Number.parseFloat(weatherObject.current.temp_c).toFixed(1),
     1.3,
   );
   fadeInnerText(currentConditionElement, weatherObject.current.condition, 1.4);
   fadeInnerText(currentHumidityElement, weatherObject.current.humidity, 1.5);
-  fadeInnerText(
-    currentWindElement,
-    `${weatherObject.current.wind_mph}MPH`,
-    1.6,
-  );
+  fadeInnerText(currentWindElement, weatherObject.current.wind_mph, 1.6);
 }
 
 async function updateForecastRow(dayElements, dayForecast, fadeDuration) {
   /* eslint-disable no-param-reassign */
   await fade(dayElements.row, fadeDuration, 0);
   dayElements.weekday.innerText = dayForecast.name;
-  dayElements.temperature.innerText = dayForecast.avgtemp_c;
+  dayElements.temperature.innerText = Number.parseFloat(
+    dayForecast.avgtemp_c,
+  ).toFixed(1);
   dayElements.condition.src = dayForecast.icon;
   fade(dayElements.row, fadeDuration, 1);
   /* eslint-enable no-param-reassign */
