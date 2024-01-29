@@ -7,9 +7,14 @@ function fade(element, fadeSeconds, targetOpacity, fn) {
       resolve();
     }
 
-    element.style.transition = `opacity ${fadeSeconds}s`;
-    element.style.opacity = targetOpacity;
-    element.addEventListener('transitionend', onTransitionEnd);
+    /* eslint-disable-next-line eqeqeq -- comparing css properties won't work otherwise */
+    if (element.style.opacity != targetOpacity) {
+      element.style.transition = `opacity ${fadeSeconds}s`;
+      element.style.opacity = targetOpacity;
+      element.addEventListener('transitionend', onTransitionEnd);
+    } else {
+      resolve();
+    }
   });
 }
 
