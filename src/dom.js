@@ -351,13 +351,11 @@ async function updateWeatherDisplay(weatherObject) {
         `${weatherObject.location.name} ${weatherObject.current.condition} ${weatherObject.current.is_day ? 'day' : 'night'}`,
       ),
     );
-
     updateLocation(weatherObject);
-
-    showForecastPanel();
-    showCurrentPanel();
     updateCurrentWeather(weatherObject);
     updateForecast(weatherObject);
+    showForecastPanel();
+    showCurrentPanel();
   } catch (error) {
     console.log(error);
     displayWeatherDataFetchError(new Error('Data display error'));
