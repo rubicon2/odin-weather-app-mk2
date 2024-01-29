@@ -44,6 +44,6 @@ setInterval(() => {
   }
 }, 10000);
 
-document.querySelector('input').addEventListener('focus', (event) => {
+document.querySelector('input').addEventListener('focus', () => {
   auto = false;
 });
