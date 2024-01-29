@@ -103,11 +103,11 @@ body {
   color: var(--main-text-color);
 }
 
-.forecast-temperature {
+.unit-component {
   display: flex;
 }
 
-.forecast-temperature-unit {
+.measurement-unit {
   color: var(--secondary-text-color);
   font-size: 0.8rem;
   align-self: flex-start;

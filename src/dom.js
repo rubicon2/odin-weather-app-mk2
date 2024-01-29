@@ -132,14 +132,30 @@ function createWeatherPanelRow(titleText, ...infoElements) {
   return row;
 }
 
+function createUnitComponent(unit) {
+  const containerElement = document.createElement('div');
+  containerElement.classList.add('unit-component');
+
+  const measurementReadingElement = document.createElement('span');
+  measurementReadingElement.classList.add('measurement-reading');
+  containerElement.appendChild(measurementReadingElement);
+
+  const measurementUnitElement = document.createElement('span');
+  measurementUnitElement.classList.add('measurement-unit');
+  measurementUnitElement.innerText = unit;
+  containerElement.appendChild(measurementUnitElement);
+
+  return { containerElement, measurementReadingElement };
+}
+
 function createCurrentWeatherPanel() {
   const currentWeatherPanelElement = document.createElement('div');
   currentWeatherPanelElement.classList.add('weather-panel-content');
 
-  currentTemperatureElement = document.createElement('span');
-  currentTemperatureElement.classList.add('temperature-display');
+  const temperatureComponent = createUnitComponent(`${degreeSymbol}C`);
+  currentTemperatureElement = temperatureComponent.measurementReadingElement;
   currentWeatherPanelElement.appendChild(
-    createWeatherPanelRow('Average', currentTemperatureElement),
+    createWeatherPanelRow('Average', temperatureComponent.containerElement),
   );
 
   currentConditionElement = document.createElement('div');
@@ -148,16 +164,16 @@ function createCurrentWeatherPanel() {
     createWeatherPanelRow('Condition', currentConditionElement),
   );
 
-  currentHumidityElement = document.createElement('div');
-  currentHumidityElement.classList.add('humidity-display');
+  const humidityComponent = createUnitComponent('%');
+  currentHumidityElement = humidityComponent.measurementReadingElement;
   currentWeatherPanelElement.appendChild(
-    createWeatherPanelRow('Humidity', currentHumidityElement),
+    createWeatherPanelRow('Humidity', humidityComponent.containerElement),
   );
 
-  currentWindElement = document.createElement('div');
-  currentWindElement.classList.add('wind-display');
+  const windComponent = createUnitComponent('mph');
+  currentWindElement = windComponent.measurementReadingElement;
   currentWeatherPanelElement.appendChild(
-    createWeatherPanelRow('Wind', currentWindElement),
+    createWeatherPanelRow('Wind', windComponent.containerElement),
   );
 
   return currentWeatherPanelElement;
@@ -167,17 +183,7 @@ function createWeatherForecastDayInfo() {
   const weekdayElement = document.createElement('div');
   weekdayElement.classList.add('weather-panel-row-title');
 
-  const temperatureElement = document.createElement('div');
-  temperatureElement.classList.add('forecast-temperature');
-
-  const tempReadingElement = document.createElement('span');
-  tempReadingElement.classList.add('forecast-temperature-reading');
-  temperatureElement.appendChild(tempReadingElement);
-
-  const tempUnitElement = document.createElement('span');
-  tempUnitElement.classList.add('forecast-temperature-unit');
-  tempUnitElement.innerText = getTemperatureStringC('');
-  temperatureElement.appendChild(tempUnitElement);
+  const temperatureComponent = createUnitComponent(`${degreeSymbol}C`);
 
   const conditionElement = document.createElement('img');
   conditionElement.classList.add('forecast-condition');
@@ -185,14 +191,14 @@ function createWeatherForecastDayInfo() {
   const rowElement = createWeatherPanelRow(
     null,
     weekdayElement,
-    temperatureElement,
+    temperatureComponent.containerElement,
     conditionElement,
   );
 
   forecastElements.push({
     row: rowElement,
     weekday: weekdayElement,
-    temperature: tempReadingElement,
+    temperature: temperatureComponent.measurementReadingElement,
     condition: conditionElement,
   });
 
