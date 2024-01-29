@@ -56,11 +56,6 @@ function createSearchBar() {
   const searchContainer = document.createElement('div');
   searchContainer.classList.add('search-container');
 
-  errorElement = document.createElement('div');
-  errorElement.innerText = 'Error message';
-  errorElement.classList.add('error-display', 'transparent');
-  searchContainer.appendChild(errorElement);
-
   const searchBar = document.createElement('div');
   searchBar.classList.add('search-bar');
   searchContainer.appendChild(searchBar);
@@ -76,6 +71,11 @@ function createSearchBar() {
   const searchIcon = document.createElement('img');
   searchIcon.src = searchIconSrc;
   searchButton.appendChild(searchIcon);
+
+  errorElement = document.createElement('div');
+  errorElement.innerText = 'Error message';
+  errorElement.classList.add('error-display');
+  searchContainer.appendChild(errorElement);
 
   searchButton.addEventListener('click', () => {
     if (locationInput.value) {
@@ -264,7 +264,7 @@ function createInfoPanel() {
 
   weatherForecastPanel = createWeatherForecastPanel();
   weatherPanel.appendChild(weatherForecastPanel);
-  infoPanel.appendChild(createSearchBar());
+  // infoPanel.appendChild(createSearchBar());
 
   return infoPanel;
 }
@@ -354,7 +354,7 @@ async function updateWeatherDisplay(weatherObject) {
 
     updateLocation(weatherObject);
 
-    // showForecastPanel();
+    showForecastPanel();
     showCurrentPanel();
     updateCurrentWeather(weatherObject);
     updateForecast(weatherObject);
@@ -376,6 +376,8 @@ function createWeatherDisplay() {
 
   // Info panel - Takes up right side of screen, transparent background, contains text info and graphics
   weatherDisplay.appendChild(createInfoPanel());
+
+  weatherDisplay.appendChild(createSearchBar());
 
   return weatherDisplay;
 }
