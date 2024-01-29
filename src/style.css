@@ -2,7 +2,7 @@
   --main-text-color: #e2e2e2;
   --secondary-text-color: #6e6e6e;
   --error-text-color: #c56d6d;
-  --main-text-size: 32px;
+  --main-text-size: 2rem;
 
   box-sizing: border-box;
   font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
