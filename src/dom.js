@@ -18,13 +18,14 @@ let backgroundElement = null;
 let locationNameElement = null;
 let countryElement = null;
 
-let currentTemperatureElement = null;
-let currentConditionElement = null;
-let currentHumidityElement = null;
-let currentWindElement = null;
-
 let errorElement = null;
 
+const currentElements = {
+  temperature: {},
+  condition: {},
+  humidity: {},
+  wind: {},
+};
 const forecastElements = [];
 
 async function showForecastPanel() {
@@ -144,28 +145,68 @@ function createCurrentWeatherPanel() {
   const currentWeatherPanelElement = document.createElement('div');
   currentWeatherPanelElement.classList.add('weather-panel-content');
 
-  const temperatureComponent = createUnitComponent(`${degreeSymbol}C`);
-  currentTemperatureElement = temperatureComponent.measurementReadingElement;
-  currentWeatherPanelElement.appendChild(
-    createWeatherPanelRow('Average', temperatureComponent.containerElement),
+  const currentTemperatureComponent = createUnitComponent(`${degreeSymbol}C`);
+  const temperatureRow = createWeatherPanelRow(
+    'Average',
+    currentTemperatureComponent.containerElement,
   );
+  currentWeatherPanelElement.appendChild(temperatureRow);
 
-  currentConditionElement = document.createElement('div');
-  currentConditionElement.classList.add('condition-display');
-  currentWeatherPanelElement.appendChild(
-    createWeatherPanelRow('Condition', currentConditionElement),
+  const currentConditionElement = document.createElement('img');
+  currentConditionElement.classList.add(
+    'condition-icon',
+    'current-condition-icon',
   );
-
-  const humidityComponent = createUnitComponent('%');
-  currentHumidityElement = humidityComponent.measurementReadingElement;
-  currentWeatherPanelElement.appendChild(
-    createWeatherPanelRow('Humidity', humidityComponent.containerElement),
+  const conditionRow = createWeatherPanelRow(
+    'Condition',
+    currentConditionElement,
   );
+  currentWeatherPanelElement.appendChild(conditionRow);
 
-  const windComponent = createUnitComponent('mph');
-  currentWindElement = windComponent.measurementReadingElement;
-  currentWeatherPanelElement.appendChild(
-    createWeatherPanelRow('Wind', windComponent.containerElement),
+  const currentHumidityComponent = createUnitComponent('%');
+  const humidityRow = createWeatherPanelRow(
+    'Humidity',
+    currentHumidityComponent.containerElement,
+  );
+  currentWeatherPanelElement.appendChild(humidityRow);
+
+  const currentWindComponent = createUnitComponent('mph');
+  const windRow = createWeatherPanelRow(
+    'Wind',
+    currentWindComponent.containerElement,
+  );
+  currentWeatherPanelElement.appendChild(windRow);
+
+  // Grab all the refs we will need later to update info and animate fades
+  currentElements.temperature = {
+    row: temperatureRow,
+    info: currentTemperatureComponent.measurementReadingElement,
+  };
+
+  currentElements.condition = {
+    row: conditionRow,
+    info: currentConditionElement,
+  };
+
+  currentElements.humidity = {
+    row: humidityRow,
+    info: currentHumidityComponent.measurementReadingElement,
+  };
+
+  currentElements.wind = {
+    row: windRow,
+    info: currentWindComponent.measurementReadingElement,
+  };
+
+  // Add css class to adjust grid layout so all the info lines up nicely
+  currentTemperatureComponent.containerElement.classList.add(
+    'unit-component-normalized',
+  );
+  currentHumidityComponent.containerElement.classList.add(
+    'unit-component-normalized',
+  );
+  currentWindComponent.containerElement.classList.add(
+    'unit-component-normalized',
   );
 
   return currentWeatherPanelElement;
@@ -178,7 +219,7 @@ function createWeatherForecastDayInfo() {
   const temperatureComponent = createUnitComponent(`${degreeSymbol}C`);
 
   const conditionElement = document.createElement('img');
-  conditionElement.classList.add('forecast-condition');
+  conditionElement.classList.add('condition-icon');
 
   const rowElement = createWeatherPanelRow(
     null,
@@ -239,24 +280,41 @@ async function updateCurrentWeatherRow(
   updatedInfo,
   fadeDuration,
 ) {
+  /* eslint-disable no-param-reassign */
   await fade(rowElement, fadeDuration, 0);
   elementToUpdate.innerText = updatedInfo;
   await fade(rowElement, fadeDuration, 1);
+  /* eslint-enable no-param-reassign */
 }
 
 function updateCurrentWeather(weatherObject) {
-  fadeInnerText(
-    currentTemperatureElement,
+  updateCurrentWeatherRow(
+    currentElements.temperature.row,
+    currentElements.temperature.info,
     Number.parseFloat(weatherObject.current.temp_c).toFixed(1),
     1.3,
   );
-  fadeInnerText(currentConditionElement, weatherObject.current.condition, 1.4);
-  fadeInnerText(currentHumidityElement, weatherObject.current.humidity, 1.5);
-  fadeInnerText(currentWindElement, weatherObject.current.wind_mph, 1.6);
-}
-
-function updateCurrentWeather2(weatherObject) {
-  // Get all the rows, or store refs to them
+  fadeOutAndIn(currentElements.condition.row, 1.4, 1, () => {
+    currentElements.condition.info.src = weatherObject.current.condition;
+  });
+  updateCurrentWeatherRow(
+    currentElements.condition.row,
+    currentElements.condition.info,
+    weatherObject.current.condition,
+    1.4,
+  );
+  updateCurrentWeatherRow(
+    currentElements.humidity.row,
+    currentElements.humidity.info,
+    weatherObject.current.humidity,
+    1.5,
+  );
+  updateCurrentWeatherRow(
+    currentElements.wind.row,
+    currentElements.wind.info,
+    weatherObject.current.wind_mph,
+    1.6,
+  );
 }
 
 async function updateForecastRow(dayElements, dayForecast, fadeDuration) {
@@ -296,8 +354,8 @@ async function updateWeatherDisplay(weatherObject) {
 
     updateLocation(weatherObject);
 
-    showForecastPanel();
-    // showCurrentPanel();
+    // showForecastPanel();
+    showCurrentPanel();
     updateCurrentWeather(weatherObject);
     updateForecast(weatherObject);
   } catch (error) {

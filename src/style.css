@@ -104,21 +104,30 @@ body {
 }
 
 .unit-component {
-  display: flex;
+  display: grid;
+  grid-template-columns: min-content min-content;
+}
+
+.unit-component-normalized {
+  /* To keep the info lined up nicely from row to row.
+   * So there will be a column of darker text for
+   * the units of measurement, and column of lighter
+   * text with the actual information */
+  grid-template-columns: min-content 40px;
 }
 
 .measurement-unit {
   color: var(--secondary-text-color);
   font-size: 0.8rem;
-  align-self: flex-start;
 }
 
-.forecast-condition {
+.condition-icon {
   width: 1.8rem;
 }
 
-.temperature-display {
-  color: var(--secondary-text-color);
+.current-condition-icon {
+  /* Offset icon so it appears in line with info on other rows */
+  margin-right: 30px;
 }
 
 /* To contain the error display and search bar */

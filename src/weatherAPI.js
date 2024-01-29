@@ -15,7 +15,7 @@ function getCountry(weatherApiDataJson) {
 }
 
 function getCondition(weatherApiDataJson) {
-  return weatherApiDataJson.current.condition.text;
+  return weatherApiDataJson.current.condition.icon;
 }
 
 function getTempC(weatherApiDataJson) {
