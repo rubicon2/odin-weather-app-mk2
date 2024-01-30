@@ -35,18 +35,3 @@ subscribe('onWeatherDataFetchError', displayWeatherDataFetchError);
 publish('onLocationSubmit', 'Sapporo');
 
 showForecastPanel();
-
-// Testing panel transitions
-let auto = true;
-
-let snowy = false;
-setInterval(() => {
-  if (auto) {
-    publish('onLocationSubmit', snowy ? 'Sapporo' : 'London');
-    snowy = !snowy;
-  }
-}, 10000);
-
-document.querySelector('input').addEventListener('focus', () => {
-  auto = false;
-});
