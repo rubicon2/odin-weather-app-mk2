@@ -52,21 +52,45 @@ function clearWeatherDataFetchError() {
   });
 }
 
+function createWeatherPanelSelectButton() {
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.classList.add('weather-panel-select-button');
+  return button;
+}
+
 function createSearchBar() {
   const searchContainer = document.createElement('div');
   searchContainer.classList.add('search-container');
+
+  const weatherPanelSelectButtons = document.createElement('div');
+  weatherPanelSelectButtons.classList.add(
+    'weather-panel-select-button-container',
+  );
+  searchContainer.appendChild(weatherPanelSelectButtons);
+
+  const currentButton = createWeatherPanelSelectButton();
+  currentButton.innerText = 'Current';
+  currentButton.classList.add('rounded-left');
+  weatherPanelSelectButtons.appendChild(currentButton);
+
+  const forecastButton = createWeatherPanelSelectButton();
+  forecastButton.innerText = 'Forecast';
+  forecastButton.classList.add('rounded-right');
+  weatherPanelSelectButtons.appendChild(forecastButton);
 
   const searchBar = document.createElement('div');
   searchBar.classList.add('search-bar');
   searchContainer.appendChild(searchBar);
 
   const locationInput = document.createElement('input');
+  locationInput.classList.add('rounded-left');
   locationInput.type = 'text';
   locationInput.placeholder = 'Search...';
   searchBar.appendChild(locationInput);
 
   const searchButton = document.createElement('div');
-  searchButton.classList.add('search-button');
+  searchButton.classList.add('search-button', 'rounded-right');
 
   const searchIcon = document.createElement('img');
   searchIcon.src = searchIconSrc;
@@ -355,7 +379,7 @@ async function updateWeatherDisplay(weatherObject) {
     updateCurrentWeather(weatherObject);
     updateForecast(weatherObject);
     showForecastPanel();
-    showCurrentPanel();
+    // showCurrentPanel();
   } catch (error) {
     console.log(error);
     displayWeatherDataFetchError(new Error('Data display error'));

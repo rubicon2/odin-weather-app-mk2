@@ -142,6 +142,33 @@ body {
   gap: 0.5rem;
 }
 
+.weather-panel-select-button-container {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  box-shadow: 0 0 20px 10px rgba(0, 0, 0, 0.123);
+  border-radius: 50px;
+}
+
+.weather-panel-select-button {
+  color: var(--secondary-text-color);
+  font-size: 0.6rem;
+  font-weight: bold;
+  font-style: italic;
+  padding: 0.3rem 0;
+  background-color: rgba(255, 255, 255, 0.123);
+  border-radius: 50px;
+  border: none;
+}
+
+.rounded-left {
+  border-radius: 50px 0 0 50px;
+}
+
+.rounded-right {
+  border-radius: 0 50px 50px 0;
+}
+
 .error-display {
   color: var(--error-text-color);
   font-size: 0.9rem;
@@ -168,8 +195,6 @@ body {
 }
 
 .search-bar > input {
-  /* border-right: none; */
-  border-radius: 50px 0 0 50px;
   max-width: 300px;
   color: var(--secondary-text-color);
   font-style: italic;
@@ -179,19 +204,24 @@ body {
   font-style: normal;
 }
 
-.search-bar .search-button {
+button {
+  cursor: pointer;
+}
+
+.search-button {
   border-left: none;
-  border-radius: 0 50px 50px 0;
   cursor: pointer;
   display: grid;
   place-content: center;
   opacity: 0.8;
 }
 
-.search-bar .search-button:hover {
+.weather-panel-select-button:hover,
+.search-button:hover {
   opacity: 0.6;
 }
 
-.search-bar .search-button:active {
+.weather-panel-select-button:active,
+.search-button:active {
   opacity: 0.3;
 }
