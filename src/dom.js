@@ -21,6 +21,8 @@ let countryElement = null;
 
 let errorElement = null;
 
+let weatherObject = null;
+
 const currentElements = {
   temperature: {},
   condition: {},
@@ -32,7 +34,6 @@ const forecastElements = [];
 const fadeDelay = 250;
 let selectedPanel = 'none';
 let isPanelFadeHappening = false;
-
 
 async function fadeCurrentRows(fadeDuration, targetOpacity) {
   fade(currentElements.temperature.row, fadeDuration, targetOpacity);
@@ -51,33 +52,6 @@ async function fadeForecastRows(fadeDuration, targetOpacity) {
     await delay(fadeDelay);
   }
   /* eslint-enable */
-}
-
-async function showForecastPanel() {
-  /* Checking if transition is happening before triggering it is kind of hacky
-   * but otherwise it is very easy to interrupt the transition before it is done.
-   * Current and forecast buttons in top left just ignore your clicks, which doesn't
-   * feel good as the user. A better solution might be to have an animation queue
-   * for each element, or storing a list of elements that are currently having css
-   * properties changed, and when a new fade is started, it checks the list and
-   * stops the existing animation before starting the new one. */
-  if (!isPanelFadeHappening) {
-    selectedPanel = 'forecast';
-    isPanelFadeHappening = true;
-    await fadeCurrentRows(1, 0);
-    await fadeForecastRows(1, 1);
-    isPanelFadeHappening = false;
-  }
-}
-
-async function showCurrentPanel() {
-  if (!isPanelFadeHappening) {
-    selectedPanel = 'current';
-    isPanelFadeHappening = true;
-    await fadeForecastRows(1, 0);
-    await fadeCurrentRows(1, 1);
-    isPanelFadeHappening = false;
-  }
 }
 
 function displayWeatherDataFetchError(error) {
@@ -341,12 +315,12 @@ function createInfoPanel() {
   return infoPanel;
 }
 
-function updateLocation(weatherObject) {
+function updateLocation() {
   fadeInnerText(locationNameElement, weatherObject.location.name);
   fadeInnerText(countryElement, weatherObject.location.country, 1.1);
 }
 
-async function updateCurrentWeather(weatherObject) {
+async function updateCurrentWeather() {
   await fadeCurrentRows(1, 0);
   currentElements.temperature.info.innerText = Number.parseFloat(
     weatherObject.current.temp_c,
@@ -354,10 +328,10 @@ async function updateCurrentWeather(weatherObject) {
   currentElements.condition.info.src = weatherObject.current.condition;
   currentElements.humidity.info.innerText = weatherObject.current.humidity;
   currentElements.wind.info.innerText = weatherObject.current.wind_mph;
-  if (selectedPanel === 'current') fadeCurrentRows(0, 1);
+  if (selectedPanel === 'current') await fadeCurrentRows(1, 1);
 }
 
-async function updateForecast(weatherObject) {
+async function updateForecast() {
   await fadeForecastRows(1, 0);
   for (let i = 0; i < forecastElements.length; i += 1) {
     const dayElements = forecastElements[i];
@@ -373,9 +347,37 @@ async function updateForecast(weatherObject) {
   if (selectedPanel === 'forecast') await fadeForecastRows(1, 1);
 }
 
-async function updateWeatherDisplay(weatherObject) {
+async function showForecastPanel() {
+  /* Checking if transition is happening before triggering it is kind of hacky
+   * but otherwise it is very easy to interrupt the transition before it is done.
+   * Current and forecast buttons in top left just ignore your clicks, which doesn't
+   * feel good as the user. A better solution might be to have an animation queue
+   * for each element, or storing a list of elements that are currently having css
+   * properties changed, and when a new fade is started, it checks the list and
+   * stops the existing animation before starting the new one. */
+  if (!isPanelFadeHappening) {
+    selectedPanel = 'forecast';
+    isPanelFadeHappening = true;
+    await fadeCurrentRows(1, 0);
+    updateForecast(weatherObject);
+    isPanelFadeHappening = false;
+  }
+}
+
+async function showCurrentPanel() {
+  if (!isPanelFadeHappening) {
+    selectedPanel = 'current';
+    isPanelFadeHappening = true;
+    await fadeForecastRows(1, 0);
+    updateCurrentWeather(weatherObject);
+    isPanelFadeHappening = false;
+  }
+}
+
+async function updateWeatherDisplay(newWeatherObject) {
   // In case weatherObject is null for whatever reason, or elements not set up yet
   try {
+    weatherObject = newWeatherObject;
     clearWeatherDataFetchError();
     fadeBackgroundImage(
       backgroundElement,
@@ -383,9 +385,9 @@ async function updateWeatherDisplay(weatherObject) {
         `${weatherObject.location.name} ${weatherObject.current.condition} ${weatherObject.current.is_day ? 'day' : 'night'}`,
       ),
     );
-    updateLocation(weatherObject);
-    updateCurrentWeather(weatherObject);
-    updateForecast(weatherObject);
+    updateLocation();
+    updateCurrentWeather();
+    updateForecast();
   } catch (error) {
     console.log(error);
     displayWeatherDataFetchError(new Error('Data display error'));
