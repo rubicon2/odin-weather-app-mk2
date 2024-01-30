@@ -2,6 +2,7 @@ import searchIconSrc from './search.svg';
 import { publish } from './pubsub';
 import getImage from './weatherPhotosAPI';
 import {
+  delay,
   fade,
   fadeOutAndIn,
   fadeInnerText,
@@ -28,14 +29,54 @@ const currentElements = {
 };
 const forecastElements = [];
 
+const fadeDelay = 250;
+let isPanelTransitionHappening = false;
+
 async function showForecastPanel() {
-  // await fade(currentWeatherPanel, 1, 0);
-  // await fade(weatherForecastPanel, 1, 1);
+  /* Checking if transition is happening before triggering it is kind of hacky
+   * but otherwise it is very easy to interrupt the transition before it is done.
+   * Current and forecast buttons in top left just ignore your clicks, which doesn't
+   * feel good as the user. A better solution might be to have an animation queue
+   * for each element, or storing a list of elements that are currently having css
+   * properties changed, and when a new fade is started, it checks the list and
+   * stops the existing animation before starting the new one. */
+  if (!isPanelTransitionHappening) {
+    isPanelTransitionHappening = true;
+    // Hide current elements
+    fade(currentElements.temperature.row, 1, 0);
+    await delay(fadeDelay);
+    fade(currentElements.condition.row, 1, 0);
+    await delay(fadeDelay);
+    fade(currentElements.humidity.row, 1, 0);
+    await delay(fadeDelay);
+    fade(currentElements.wind.row, 1, 0);
+    // Fade in forecast elements
+    for (let forecastElement of forecastElements) {
+      fade(forecastElement.row, 1, 1);
+      await delay(fadeDelay);
+    }
+    isPanelTransitionHappening = false;
+  }
 }
 
 async function showCurrentPanel() {
-  // await fade(weatherForecastPanel, 1, 0);
-  // await fade(currentWeatherPanel, 1, 1);
+  if (!isPanelTransitionHappening) {
+    isPanelTransitionHappening = true;
+    // Fade out forecast elements
+    for (let forecastElement of forecastElements) {
+      fade(forecastElement.row, 1, 0);
+      await delay(fadeDelay);
+    }
+    // Fade in current elements
+    fade(currentElements.temperature.row, 1, 1);
+    await delay(fadeDelay);
+    fade(currentElements.condition.row, 1, 1);
+    await delay(fadeDelay);
+    fade(currentElements.humidity.row, 1, 1);
+    await delay(fadeDelay);
+    fade(currentElements.wind.row, 1, 1);
+    isPanelTransitionHappening = false;
+  }
 }
 
 function displayWeatherDataFetchError(error) {
