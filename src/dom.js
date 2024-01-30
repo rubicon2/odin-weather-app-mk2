@@ -29,13 +29,13 @@ const currentElements = {
 const forecastElements = [];
 
 async function showForecastPanel() {
-  await fade(currentWeatherPanel, 1, 0);
-  await fade(weatherForecastPanel, 1, 1);
+  // await fade(currentWeatherPanel, 1, 0);
+  // await fade(weatherForecastPanel, 1, 1);
 }
 
 async function showCurrentPanel() {
-  await fade(weatherForecastPanel, 1, 0);
-  await fade(currentWeatherPanel, 1, 1);
+  // await fade(weatherForecastPanel, 1, 0);
+  // await fade(currentWeatherPanel, 1, 1);
 }
 
 function displayWeatherDataFetchError(error) {
@@ -73,10 +73,17 @@ function createSearchBar() {
   currentButton.innerText = 'Current';
   currentButton.classList.add('rounded-left');
   weatherPanelSelectButtons.appendChild(currentButton);
+  currentButton.addEventListener('click', () => {
+    showCurrentPanel();
+  });
 
   const forecastButton = createWeatherPanelSelectButton();
   forecastButton.innerText = 'Forecast';
   forecastButton.classList.add('rounded-right');
+  forecastButton.addEventListener('click', () => {
+    showForecastPanel();
+  });
+
   weatherPanelSelectButtons.appendChild(forecastButton);
 
   const searchBar = document.createElement('div');
