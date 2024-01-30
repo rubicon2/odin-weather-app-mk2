@@ -30,7 +30,28 @@ const currentElements = {
 const forecastElements = [];
 
 const fadeDelay = 250;
-let isPanelTransitionHappening = false;
+let selectedPanel = 'none';
+let isPanelFadeHappening = false;
+
+
+async function fadeCurrentRows(fadeDuration, targetOpacity) {
+  fade(currentElements.temperature.row, fadeDuration, targetOpacity);
+  await delay(fadeDelay);
+  fade(currentElements.condition.row, fadeDuration, targetOpacity);
+  await delay(fadeDelay);
+  fade(currentElements.humidity.row, fadeDuration, targetOpacity);
+  await delay(fadeDelay);
+  fade(currentElements.wind.row, fadeDuration, targetOpacity);
+}
+
+async function fadeForecastRows(fadeDuration, targetOpacity) {
+  /* eslint-disable -- stop whining */
+  for (let forecastElement of forecastElements) {
+    fade(forecastElement.row, fadeDuration, targetOpacity);
+    await delay(fadeDelay);
+  }
+  /* eslint-enable */
+}
 
 async function showForecastPanel() {
   /* Checking if transition is happening before triggering it is kind of hacky
@@ -40,42 +61,22 @@ async function showForecastPanel() {
    * for each element, or storing a list of elements that are currently having css
    * properties changed, and when a new fade is started, it checks the list and
    * stops the existing animation before starting the new one. */
-  if (!isPanelTransitionHappening) {
-    isPanelTransitionHappening = true;
-    // Hide current elements
-    fade(currentElements.temperature.row, 1, 0);
-    await delay(fadeDelay);
-    fade(currentElements.condition.row, 1, 0);
-    await delay(fadeDelay);
-    fade(currentElements.humidity.row, 1, 0);
-    await delay(fadeDelay);
-    fade(currentElements.wind.row, 1, 0);
-    // Fade in forecast elements
-    for (let forecastElement of forecastElements) {
-      fade(forecastElement.row, 1, 1);
-      await delay(fadeDelay);
-    }
-    isPanelTransitionHappening = false;
+  if (!isPanelFadeHappening) {
+    selectedPanel = 'forecast';
+    isPanelFadeHappening = true;
+    await fadeCurrentRows(1, 0);
+    await fadeForecastRows(1, 1);
+    isPanelFadeHappening = false;
   }
 }
 
 async function showCurrentPanel() {
-  if (!isPanelTransitionHappening) {
-    isPanelTransitionHappening = true;
-    // Fade out forecast elements
-    for (let forecastElement of forecastElements) {
-      fade(forecastElement.row, 1, 0);
-      await delay(fadeDelay);
-    }
-    // Fade in current elements
-    fade(currentElements.temperature.row, 1, 1);
-    await delay(fadeDelay);
-    fade(currentElements.condition.row, 1, 1);
-    await delay(fadeDelay);
-    fade(currentElements.humidity.row, 1, 1);
-    await delay(fadeDelay);
-    fade(currentElements.wind.row, 1, 1);
-    isPanelTransitionHappening = false;
+  if (!isPanelFadeHappening) {
+    selectedPanel = 'current';
+    isPanelFadeHappening = true;
+    await fadeForecastRows(1, 0);
+    await fadeCurrentRows(1, 1);
+    isPanelFadeHappening = false;
   }
 }
 
@@ -336,7 +337,6 @@ function createInfoPanel() {
 
   weatherForecastPanel = createWeatherForecastPanel();
   weatherPanel.appendChild(weatherForecastPanel);
-  // infoPanel.appendChild(createSearchBar());
 
   return infoPanel;
 }
@@ -346,71 +346,31 @@ function updateLocation(weatherObject) {
   fadeInnerText(countryElement, weatherObject.location.country, 1.1);
 }
 
-async function updateCurrentWeatherRow(
-  rowElement,
-  elementToUpdate,
-  updatedInfo,
-  fadeDuration,
-) {
-  /* eslint-disable no-param-reassign */
-  await fade(rowElement, fadeDuration, 0);
-  elementToUpdate.innerText = updatedInfo;
-  await fade(rowElement, fadeDuration, 1);
-  /* eslint-enable no-param-reassign */
-}
-
-function updateCurrentWeather(weatherObject) {
-  updateCurrentWeatherRow(
-    currentElements.temperature.row,
-    currentElements.temperature.info,
-    Number.parseFloat(weatherObject.current.temp_c).toFixed(1),
-    1.3,
-  );
-  fadeOutAndIn(currentElements.condition.row, 1.4, 1, () => {
-    currentElements.condition.info.src = weatherObject.current.condition;
-  });
-  updateCurrentWeatherRow(
-    currentElements.condition.row,
-    currentElements.condition.info,
-    weatherObject.current.condition,
-    1.4,
-  );
-  updateCurrentWeatherRow(
-    currentElements.humidity.row,
-    currentElements.humidity.info,
-    weatherObject.current.humidity,
-    1.5,
-  );
-  updateCurrentWeatherRow(
-    currentElements.wind.row,
-    currentElements.wind.info,
-    weatherObject.current.wind_mph,
-    1.6,
-  );
-}
-
-async function updateForecastRow(dayElements, dayForecast, fadeDuration) {
-  /* eslint-disable no-param-reassign */
-  await fade(dayElements.row, fadeDuration, 0);
-  dayElements.weekday.innerText = dayForecast.name;
-  dayElements.temperature.innerText = Number.parseFloat(
-    dayForecast.avgtemp_c,
+async function updateCurrentWeather(weatherObject) {
+  await fadeCurrentRows(1, 0);
+  currentElements.temperature.info.innerText = Number.parseFloat(
+    weatherObject.current.temp_c,
   ).toFixed(1);
-  dayElements.condition.src = dayForecast.icon;
-  fade(dayElements.row, fadeDuration, 1);
-  /* eslint-enable no-param-reassign */
+  currentElements.condition.info.src = weatherObject.current.condition;
+  currentElements.humidity.info.innerText = weatherObject.current.humidity;
+  currentElements.wind.info.innerText = weatherObject.current.wind_mph;
+  if (selectedPanel === 'current') fadeCurrentRows(0, 1);
 }
 
-function updateForecast(weatherObject) {
+async function updateForecast(weatherObject) {
+  await fadeForecastRows(1, 0);
   for (let i = 0; i < forecastElements.length; i += 1) {
-    const fadeDuration = 1 + i * 0.2;
     const dayElements = forecastElements[i];
     const dayForecast = weatherObject.forecast[i];
-
     if (i === 0) dayForecast.name = 'Today';
     else if (i === 1) dayForecast.name = 'Tomorrow';
-    updateForecastRow(dayElements, dayForecast, fadeDuration);
+    dayElements.weekday.innerText = dayForecast.name;
+    dayElements.temperature.innerText = Number.parseFloat(
+      dayForecast.avgtemp_c,
+    ).toFixed(1);
+    dayElements.condition.src = dayForecast.icon;
   }
+  if (selectedPanel === 'forecast') await fadeForecastRows(1, 1);
 }
 
 async function updateWeatherDisplay(weatherObject) {
@@ -426,8 +386,6 @@ async function updateWeatherDisplay(weatherObject) {
     updateLocation(weatherObject);
     updateCurrentWeather(weatherObject);
     updateForecast(weatherObject);
-    showForecastPanel();
-    // showCurrentPanel();
   } catch (error) {
     console.log(error);
     displayWeatherDataFetchError(new Error('Data display error'));

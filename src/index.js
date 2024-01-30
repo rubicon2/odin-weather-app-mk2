@@ -2,6 +2,7 @@ import { publish, subscribe } from './pubsub';
 import fetchWeatherData from './weatherAPI';
 import {
   createWeatherDisplay,
+  showForecastPanel,
   updateWeatherDisplay,
   displayWeatherDataFetchError,
 } from './dom';
@@ -32,6 +33,8 @@ subscribe('onLocationSubmit', fetchWeatherData);
 subscribe('onWeatherDataFetchSuccess', updateWeatherDisplay);
 subscribe('onWeatherDataFetchError', displayWeatherDataFetchError);
 publish('onLocationSubmit', 'Sapporo');
+
+showForecastPanel();
 
 // Testing panel transitions
 let auto = true;

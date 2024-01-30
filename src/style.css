@@ -95,6 +95,8 @@ body {
   background-color: #1d1d1dd5;
   padding: 1rem;
   border-radius: 50px;
+
+  opacity: 0;
 }
 
 .weather-panel-row-title {
