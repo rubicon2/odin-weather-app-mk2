@@ -1,3 +1,11 @@
+function delay(milliseconds) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve();
+    }, milliseconds);
+  });
+}
+
 /* eslint-disable no-param-reassign -- the whole point of this method is to update the properties on the element */
 function fade(element, fadeSeconds, targetOpacity, fn) {
   return new Promise((resolve) => {
@@ -53,4 +61,4 @@ function fadeBackgroundImage(element, img, fadeSeconds = 1, targetOpacity = 1) {
   });
 }
 
-export { fade, fadeOutAndIn, fadeInnerText, fadeBackgroundImage };
+export { delay, fade, fadeOutAndIn, fadeInnerText, fadeBackgroundImage };
