@@ -23,7 +23,7 @@ function getCondition(weatherApiDataJson) {
 }
 
 function getConditionIcon(weatherApiDataJson) {
-  return weatherApiDataJson.current.condition.icon;
+  return `http:${weatherApiDataJson.current.condition.icon}`;
 }
 
 function getTempC(weatherApiDataJson) {
@@ -50,10 +50,6 @@ function getIsDay(weatherApiDataJson) {
   return weatherApiDataJson.current.is_day;
 }
 
-function getIcon(weatherApiDataJson) {
-  return weatherApiDataJson.current.condition.icon;
-}
-
 function extractLocationData(weatherApiDataJson) {
   const obj = {};
 
@@ -78,7 +74,7 @@ function extractCurrentWeatherData(weatherApiDataJson) {
   obj.wind_kph = getWindSpeedKph(weatherApiDataJson);
 
   obj.is_day = getIsDay(weatherApiDataJson);
-  obj.icon = getIcon(weatherApiDataJson);
+  obj.icon = getConditionIcon(weatherApiDataJson);
 
   return obj;
 }
@@ -96,7 +92,7 @@ function extractForecastDayData(forecastDay) {
   dayData.avgtemp_f = day.avgtemp_f;
   dayData.condition = day.condition.text;
   dayData.code = day.condition.code;
-  dayData.icon = day.condition.icon;
+  dayData.icon = `http:${day.condition.icon}`;
 
   return dayData;
 }
