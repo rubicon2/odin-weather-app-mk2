@@ -5,6 +5,7 @@ import createSearchBar from './components/searchBar/searchBar';
 import createLocationHeader from './components/locationHeader';
 import createCurrentWeatherPanel from './components/currentWeatherPanel';
 import createWeatherForecastDayInfo from './components/weatherForecastDayInfo';
+import createWeatherForecastPanel from './components/forecastWeatherPanel';
 
 // Store refs to the elements that will update, so we don't have to document.querySelector() every time
 let currentWeatherPanel = null;
@@ -38,20 +39,6 @@ async function clearWeatherDataFetchError() {
   errorElement.innerText = '';
 }
 
-function createWeatherForecastPanel() {
-  const weatherForecastPanelElement = document.createElement('div');
-  weatherForecastPanelElement.classList.add('weather-panel-content');
-
-  forecastElements = [];
-  for (let i = 0; i < 7; i += 1) {
-    const dayInfo = createWeatherForecastDayInfo();
-    forecastElements.push(dayInfo);
-    weatherForecastPanelElement.appendChild(dayInfo.row);
-  }
-
-  return weatherForecastPanelElement;
-}
-
 function createInfoPanel() {
   const infoPanel = document.createElement('div');
   infoPanel.classList.add('side-panel');
@@ -70,7 +57,9 @@ function createInfoPanel() {
   currentElements = currentWeather.currentElements;
   weatherPanel.appendChild(currentWeather.container);
 
-  weatherForecastPanel = createWeatherForecastPanel();
+  const weatherForecast = createWeatherForecastPanel();
+  forecastElements = weatherForecast.forecastElements;
+  weatherForecastPanel = weatherForecast.container;
   weatherPanel.appendChild(weatherForecastPanel);
 
   return infoPanel;
