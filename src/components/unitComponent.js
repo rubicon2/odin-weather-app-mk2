@@ -13,3 +13,5 @@ export default function createUnitComponent(unit) {
 
   return { containerElement, measurementReadingElement };
 }
+
+export const degreeSymbol = '\u00B0';

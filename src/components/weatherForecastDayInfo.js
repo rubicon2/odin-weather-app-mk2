@@ -1,7 +1,5 @@
-import createUnitComponent from './unitComponent';
+import createUnitComponent, { degreeSymbol } from './unitComponent';
 import createWeatherPanelRow from './weatherPanelRow';
-
-const degreeSymbol = '\u00B0';
 
 export default function createWeatherForecastDayInfo() {
   const weekdayElement = document.createElement('div');

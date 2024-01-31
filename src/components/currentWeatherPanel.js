@@ -1,7 +1,5 @@
 import createWeatherPanelRow from './weatherPanelRow';
-import createUnitComponent from './unitComponent';
-
-const degreeSymbol = '\u00B0';
+import createUnitComponent, { degreeSymbol } from './unitComponent';
 
 export default function createCurrentWeatherPanel() {
   const currentWeatherPanelElement = document.createElement('div');
