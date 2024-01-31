@@ -23,7 +23,7 @@ function getCondition(weatherApiDataJson) {
 }
 
 function getConditionIcon(weatherApiDataJson) {
-  return `http:${weatherApiDataJson.current.condition.icon}`;
+  return `https:${weatherApiDataJson.current.condition.icon}`;
 }
 
 function getTempC(weatherApiDataJson) {
@@ -92,7 +92,7 @@ function extractForecastDayData(forecastDay) {
   dayData.avgtemp_f = day.avgtemp_f;
   dayData.condition = day.condition.text;
   dayData.code = day.condition.code;
-  dayData.icon = `http:${day.condition.icon}`;
+  dayData.icon = `https:${day.condition.icon}`;
 
   return dayData;
 }
