@@ -99,7 +99,6 @@ function extractForecastDayData(forecastDay) {
 
 function extractForecastData(weatherApiDataJson) {
   const days = [];
-
   for (let i = 0; i < weatherApiDataJson.forecast.forecastday.length; i += 1) {
     days.push(
       extractForecastDayData(weatherApiDataJson.forecast.forecastday[i]),
@@ -122,6 +121,7 @@ export default async function fetchWeatherData(locationName) {
     publish('onWeatherDataFetchStart');
     const response = await fetch(
       `https://api.weatherapi.com/v1/forecast.json?key=${API_KEY}&q=${locationName}&days=7&aqi=no&alerts=no`,
+      { mode: 'cors' },
     );
     const json = await response.json();
     publish('onWeatherDataFetchSuccess', extractWeatherData(json));
