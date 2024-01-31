@@ -1,7 +1,8 @@
-import searchIconSrc from './search.svg';
 import { publish } from './pubsub';
 import getImage from './weatherPhotosAPI';
+import createUnitComponent from './components/unitComponent';
 import { delay, fade, fadeInnerText, fadeBackgroundImage } from './domFade';
+import createSearchBar from './components/searchBar/searchBar';
 
 const degreeSymbol = '\u00B0';
 
@@ -29,25 +30,6 @@ const fadeDelay = 250;
 let selectedPanel = 'none';
 let isPanelFadeHappening = false;
 
-async function fadeCurrentRows(fadeDuration, targetOpacity) {
-  fade(currentElements.temperature.row, fadeDuration, targetOpacity);
-  await delay(fadeDelay);
-  fade(currentElements.condition.row, fadeDuration, targetOpacity);
-  await delay(fadeDelay);
-  fade(currentElements.humidity.row, fadeDuration, targetOpacity);
-  await delay(fadeDelay);
-  fade(currentElements.wind.row, fadeDuration, targetOpacity);
-}
-
-async function fadeForecastRows(fadeDuration, targetOpacity) {
-  /* eslint-disable -- stop whining */
-  for (let forecastElement of forecastElements) {
-    fade(forecastElement.row, fadeDuration, targetOpacity);
-    await delay(fadeDelay);
-  }
-  /* eslint-enable */
-}
-
 async function displayWeatherDataFetchError(error) {
   if (errorElement.innerText !== error.message) {
     await fade(errorElement, 0.3, 0);
@@ -59,80 +41,6 @@ async function displayWeatherDataFetchError(error) {
 async function clearWeatherDataFetchError() {
   await fade(errorElement, 0.3, 0);
   errorElement.innerText = '';
-}
-
-function createWeatherPanelSelectButton() {
-  const button = document.createElement('button');
-  button.type = 'button';
-  button.classList.add('weather-panel-select-button');
-  return button;
-}
-
-function createSearchBar() {
-  const searchContainer = document.createElement('div');
-  searchContainer.classList.add('search-container');
-
-  const weatherPanelSelectButtons = document.createElement('div');
-  weatherPanelSelectButtons.classList.add(
-    'weather-panel-select-button-container',
-  );
-  searchContainer.appendChild(weatherPanelSelectButtons);
-
-  const currentButton = createWeatherPanelSelectButton();
-  currentButton.innerText = 'Current';
-  currentButton.classList.add('rounded-left');
-  weatherPanelSelectButtons.appendChild(currentButton);
-  currentButton.addEventListener('click', () => {
-    showCurrentPanel();
-  });
-
-  const forecastButton = createWeatherPanelSelectButton();
-  forecastButton.innerText = 'Forecast';
-  forecastButton.classList.add('rounded-right');
-  forecastButton.addEventListener('click', () => {
-    showForecastPanel();
-  });
-
-  weatherPanelSelectButtons.appendChild(forecastButton);
-
-  const searchBar = document.createElement('div');
-  searchBar.classList.add('search-bar');
-  searchContainer.appendChild(searchBar);
-
-  const locationInput = document.createElement('input');
-  locationInput.classList.add('rounded-left');
-  locationInput.type = 'text';
-  locationInput.placeholder = 'Search...';
-  searchBar.appendChild(locationInput);
-
-  const searchButton = document.createElement('div');
-  searchButton.classList.add('search-button', 'rounded-right');
-
-  const searchIcon = document.createElement('img');
-  searchIcon.src = searchIconSrc;
-  searchButton.appendChild(searchIcon);
-
-  errorElement = document.createElement('div');
-  errorElement.innerText = 'Error message';
-  errorElement.classList.add('error-display');
-  searchContainer.appendChild(errorElement);
-
-  searchButton.addEventListener('click', () => {
-    if (locationInput.value) {
-      // If input is same location we are already displaying, don't bother updating but don't throw any errors either
-      if (
-        locationInput.value.toLowerCase() !==
-        locationNameElement.innerText.toLowerCase()
-      ) {
-        publish('onLocationSubmit', locationInput.value);
-      } else {
-        clearWeatherDataFetchError();
-      }
-    } else displayWeatherDataFetchError(new Error('Please enter a location'));
-  });
-  searchBar.appendChild(searchButton);
-
-  return searchContainer;
 }
 
 function createLocationElement() {
@@ -166,22 +74,6 @@ function createWeatherPanelRow(titleText, ...infoElements) {
   });
 
   return row;
-}
-
-function createUnitComponent(unit) {
-  const containerElement = document.createElement('div');
-  containerElement.classList.add('unit-component');
-
-  const measurementReadingElement = document.createElement('span');
-  measurementReadingElement.classList.add('measurement-reading');
-  containerElement.appendChild(measurementReadingElement);
-
-  const measurementUnitElement = document.createElement('span');
-  measurementUnitElement.classList.add('measurement-unit');
-  measurementUnitElement.innerText = unit;
-  containerElement.appendChild(measurementUnitElement);
-
-  return { containerElement, measurementReadingElement };
 }
 
 function createCurrentWeatherPanel() {
@@ -316,15 +208,23 @@ function updateLocation() {
   fadeInnerText(countryElement, weatherObject.location.country, 1.1);
 }
 
-async function updateCurrentWeather() {
-  await fadeCurrentRows(1, 0);
-  currentElements.temperature.info.innerText = Number.parseFloat(
-    weatherObject.current.temp_c,
-  ).toFixed(1);
-  currentElements.condition.info.src = weatherObject.current.icon;
-  currentElements.humidity.info.innerText = weatherObject.current.humidity;
-  currentElements.wind.info.innerText = weatherObject.current.wind_mph;
-  if (selectedPanel === 'current') await fadeCurrentRows(1, 1);
+async function fadeCurrentRows(fadeDuration, targetOpacity) {
+  fade(currentElements.temperature.row, fadeDuration, targetOpacity);
+  await delay(fadeDelay);
+  fade(currentElements.condition.row, fadeDuration, targetOpacity);
+  await delay(fadeDelay);
+  fade(currentElements.humidity.row, fadeDuration, targetOpacity);
+  await delay(fadeDelay);
+  fade(currentElements.wind.row, fadeDuration, targetOpacity);
+}
+
+async function fadeForecastRows(fadeDuration, targetOpacity) {
+  /* eslint-disable -- stop whining */
+  for (let forecastElement of forecastElements) {
+    fade(forecastElement.row, fadeDuration, targetOpacity);
+    await delay(fadeDelay);
+  }
+  /* eslint-enable */
 }
 
 async function updateForecast() {
@@ -360,6 +260,17 @@ async function showForecastPanel() {
   }
 }
 
+async function updateCurrentWeather() {
+  await fadeCurrentRows(1, 0);
+  currentElements.temperature.info.innerText = Number.parseFloat(
+    weatherObject.current.temp_c,
+  ).toFixed(1);
+  currentElements.condition.info.src = weatherObject.current.icon;
+  currentElements.humidity.info.innerText = weatherObject.current.humidity;
+  currentElements.wind.info.innerText = weatherObject.current.wind_mph;
+  if (selectedPanel === 'current') await fadeCurrentRows(1, 1);
+}
+
 async function showCurrentPanel() {
   if (!isPanelFadeHappening) {
     selectedPanel = 'current';
@@ -370,7 +281,7 @@ async function showCurrentPanel() {
   }
 }
 
-async function updateWeatherDisplay(newWeatherObject) {
+function updateWeatherDisplay(newWeatherObject) {
   // In case weatherObject is null for whatever reason, or elements not set up yet
   try {
     weatherObject = newWeatherObject;
@@ -403,7 +314,29 @@ function createWeatherDisplay() {
   // Info panel - Takes up right side of screen, transparent background, contains text info and graphics
   weatherDisplay.appendChild(createInfoPanel());
 
-  weatherDisplay.appendChild(createSearchBar());
+  const searchBar = createSearchBar();
+  errorElement = searchBar.errorElement;
+  // Hook up buttons
+  searchBar.currentButton.addEventListener('click', () => {
+    showCurrentPanel();
+  });
+  searchBar.forecastButton.addEventListener('click', () => {
+    showForecastPanel();
+  });
+  searchBar.searchButton.addEventListener('click', () => {
+    const inputValue = searchBar.locationInput.value;
+    if (inputValue) {
+      // If input is same location we are already displaying, don't bother updating but don't throw any errors either
+      if (
+        inputValue.toLowerCase() !== locationNameElement.innerText.toLowerCase()
+      ) {
+        publish('onLocationSubmit', inputValue);
+      } else {
+        clearWeatherDataFetchError();
+      }
+    } else displayWeatherDataFetchError(new Error('Please enter a location'));
+  });
+  weatherDisplay.appendChild(searchBar.container);
 
   return weatherDisplay;
 }
