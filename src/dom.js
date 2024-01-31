@@ -3,6 +3,7 @@ import getImage from './weatherPhotosAPI';
 import createUnitComponent from './components/unitComponent';
 import { delay, fade, fadeInnerText, fadeBackgroundImage } from './domFade';
 import createSearchBar from './components/searchBar/searchBar';
+import createWeatherPanelRow from './components/weatherPanelRow';
 
 const degreeSymbol = '\u00B0';
 
@@ -56,24 +57,6 @@ function createLocationElement() {
   locationElement.appendChild(countryElement);
 
   return locationElement;
-}
-
-function createWeatherPanelRow(titleText, ...infoElements) {
-  const row = document.createElement('div');
-  row.classList.add('weather-panel-row');
-
-  if (titleText) {
-    const title = document.createElement('span');
-    title.classList.add('weather-panel-row-title');
-    title.innerText = titleText;
-    row.appendChild(title);
-  }
-
-  infoElements.forEach((element) => {
-    row.appendChild(element);
-  });
-
-  return row;
 }
 
 function createCurrentWeatherPanel() {
