@@ -121,7 +121,7 @@ export default async function fetchWeatherData(locationName) {
   try {
     publish('onWeatherDataFetchStart');
     const response = await fetch(
-      `http://api.weatherapi.com/v1/forecast.json?key=${API_KEY}&q=${locationName}&days=7&aqi=no&alerts=no`,
+      `https://api.weatherapi.com/v1/forecast.json?key=${API_KEY}&q=${locationName}&days=7&aqi=no&alerts=no`,
     );
     const json = await response.json();
     publish('onWeatherDataFetchSuccess', extractWeatherData(json));
