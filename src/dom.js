@@ -4,13 +4,9 @@ import { delay, fade, fadeInnerText, fadeBackgroundImage } from './domFade';
 import createSearchBar from './components/searchBar/searchBar';
 import createLocationHeader from './components/locationHeader';
 import createCurrentWeatherPanel from './components/currentWeatherPanel';
-import createWeatherForecastDayInfo from './components/weatherForecastDayInfo';
 import createWeatherForecastPanel from './components/forecastWeatherPanel';
 
 // Store refs to the elements that will update, so we don't have to document.querySelector() every time
-let currentWeatherPanel = null;
-let weatherForecastPanel = null;
-
 let backgroundElement = null;
 let locationNameElement = null;
 let countryElement = null;
@@ -53,14 +49,12 @@ function createInfoPanel() {
   infoPanel.appendChild(weatherPanel);
 
   const currentWeather = createCurrentWeatherPanel();
-  currentWeatherPanel = currentWeather.container;
   currentElements = currentWeather.currentElements;
   weatherPanel.appendChild(currentWeather.container);
 
   const weatherForecast = createWeatherForecastPanel();
   forecastElements = weatherForecast.forecastElements;
-  weatherForecastPanel = weatherForecast.container;
-  weatherPanel.appendChild(weatherForecastPanel);
+  weatherPanel.appendChild(weatherForecast.container);
 
   return infoPanel;
 }
