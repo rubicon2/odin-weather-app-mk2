@@ -18,5 +18,5 @@ module.exports = {
       },
     ],
   },
-  plugins: [new HtmlWebpackPlugin('New Webpack Project')],
+  plugins: [new HtmlWebpackPlugin('Weather App')],
 };
