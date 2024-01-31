@@ -123,8 +123,11 @@ function createSearchBar() {
       if (
         locationInput.value.toLowerCase() !==
         locationNameElement.innerText.toLowerCase()
-      )
+      ) {
         publish('onLocationSubmit', locationInput.value);
+      } else {
+        clearWeatherDataFetchError();
+      }
     } else displayWeatherDataFetchError(new Error('Please enter a location'));
   });
   searchBar.appendChild(searchButton);
