@@ -4,6 +4,8 @@ import createUnitComponent from './components/unitComponent';
 import { delay, fade, fadeInnerText, fadeBackgroundImage } from './domFade';
 import createSearchBar from './components/searchBar/searchBar';
 import createWeatherPanelRow from './components/weatherPanelRow';
+import createLocationHeader from './components/locationHeader';
+import createCurrentWeatherPanel from './components/currentWeatherPanel';
 
 const degreeSymbol = '\u00B0';
 
@@ -19,12 +21,7 @@ let errorElement = null;
 
 let weatherObject = null;
 
-const currentElements = {
-  temperature: {},
-  condition: {},
-  humidity: {},
-  wind: {},
-};
+let currentElements = {};
 const forecastElements = [];
 
 const fadeDelay = 250;
@@ -42,92 +39,6 @@ async function displayWeatherDataFetchError(error) {
 async function clearWeatherDataFetchError() {
   await fade(errorElement, 0.3, 0);
   errorElement.innerText = '';
-}
-
-function createLocationElement() {
-  const locationElement = document.createElement('div');
-  locationElement.classList.add('location-header');
-
-  locationNameElement = document.createElement('div');
-  locationNameElement.classList.add('location-display');
-  locationElement.appendChild(locationNameElement);
-
-  countryElement = document.createElement('div');
-  countryElement.classList.add('country-display');
-  locationElement.appendChild(countryElement);
-
-  return locationElement;
-}
-
-function createCurrentWeatherPanel() {
-  const currentWeatherPanelElement = document.createElement('div');
-  currentWeatherPanelElement.classList.add('weather-panel-content');
-
-  const currentTemperatureComponent = createUnitComponent(`${degreeSymbol}C`);
-  const temperatureRow = createWeatherPanelRow(
-    'Average',
-    currentTemperatureComponent.containerElement,
-  );
-  currentWeatherPanelElement.appendChild(temperatureRow);
-
-  const currentConditionElement = document.createElement('img');
-  currentConditionElement.classList.add(
-    'condition-icon',
-    'current-condition-icon',
-  );
-  const conditionRow = createWeatherPanelRow(
-    'Condition',
-    currentConditionElement,
-  );
-  currentWeatherPanelElement.appendChild(conditionRow);
-
-  const currentHumidityComponent = createUnitComponent('%');
-  const humidityRow = createWeatherPanelRow(
-    'Humidity',
-    currentHumidityComponent.containerElement,
-  );
-  currentWeatherPanelElement.appendChild(humidityRow);
-
-  const currentWindComponent = createUnitComponent('mph');
-  const windRow = createWeatherPanelRow(
-    'Wind',
-    currentWindComponent.containerElement,
-  );
-  currentWeatherPanelElement.appendChild(windRow);
-
-  // Grab all the refs we will need later to update info and animate fades
-  currentElements.temperature = {
-    row: temperatureRow,
-    info: currentTemperatureComponent.measurementReadingElement,
-  };
-
-  currentElements.condition = {
-    row: conditionRow,
-    info: currentConditionElement,
-  };
-
-  currentElements.humidity = {
-    row: humidityRow,
-    info: currentHumidityComponent.measurementReadingElement,
-  };
-
-  currentElements.wind = {
-    row: windRow,
-    info: currentWindComponent.measurementReadingElement,
-  };
-
-  // Add css class to adjust grid layout so all the info lines up nicely
-  currentTemperatureComponent.containerElement.classList.add(
-    'unit-component-normalized',
-  );
-  currentHumidityComponent.containerElement.classList.add(
-    'unit-component-normalized',
-  );
-  currentWindComponent.containerElement.classList.add(
-    'unit-component-normalized',
-  );
-
-  return currentWeatherPanelElement;
 }
 
 function createWeatherForecastDayInfo() {
@@ -171,14 +82,19 @@ function createInfoPanel() {
   const infoPanel = document.createElement('div');
   infoPanel.classList.add('side-panel');
 
-  infoPanel.appendChild(createLocationElement());
+  const locationElement = createLocationHeader();
+  infoPanel.appendChild(locationElement.container);
+  locationNameElement = locationElement.locationNameElement;
+  countryElement = locationElement.countryElement;
 
   const weatherPanel = document.createElement('div');
   weatherPanel.classList.add('weather-panel');
   infoPanel.appendChild(weatherPanel);
 
-  currentWeatherPanel = createCurrentWeatherPanel();
-  weatherPanel.appendChild(currentWeatherPanel);
+  const currentWeather = createCurrentWeatherPanel();
+  currentWeatherPanel = currentWeather.container;
+  currentElements = currentWeather.currentElements;
+  weatherPanel.appendChild(currentWeather.container);
 
   weatherForecastPanel = createWeatherForecastPanel();
   weatherPanel.appendChild(weatherForecastPanel);
