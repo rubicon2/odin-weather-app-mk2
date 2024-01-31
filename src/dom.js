@@ -1,13 +1,10 @@
 import { publish } from './pubsub';
 import getImage from './weatherPhotosAPI';
-import createUnitComponent from './components/unitComponent';
 import { delay, fade, fadeInnerText, fadeBackgroundImage } from './domFade';
 import createSearchBar from './components/searchBar/searchBar';
-import createWeatherPanelRow from './components/weatherPanelRow';
 import createLocationHeader from './components/locationHeader';
 import createCurrentWeatherPanel from './components/currentWeatherPanel';
-
-const degreeSymbol = '\u00B0';
+import createWeatherForecastDayInfo from './components/weatherForecastDayInfo';
 
 // Store refs to the elements that will update, so we don't have to document.querySelector() every time
 let currentWeatherPanel = null;
@@ -22,7 +19,7 @@ let errorElement = null;
 let weatherObject = null;
 
 let currentElements = {};
-const forecastElements = [];
+let forecastElements = [];
 
 const fadeDelay = 250;
 let selectedPanel = 'none';
@@ -41,38 +38,15 @@ async function clearWeatherDataFetchError() {
   errorElement.innerText = '';
 }
 
-function createWeatherForecastDayInfo() {
-  const weekdayElement = document.createElement('div');
-  weekdayElement.classList.add('weather-panel-row-title');
-
-  const temperatureComponent = createUnitComponent(`${degreeSymbol}C`);
-
-  const conditionElement = document.createElement('img');
-  conditionElement.classList.add('condition-icon');
-
-  const rowElement = createWeatherPanelRow(
-    null,
-    weekdayElement,
-    temperatureComponent.containerElement,
-    conditionElement,
-  );
-
-  forecastElements.push({
-    row: rowElement,
-    weekday: weekdayElement,
-    temperature: temperatureComponent.measurementReadingElement,
-    condition: conditionElement,
-  });
-
-  return rowElement;
-}
-
 function createWeatherForecastPanel() {
   const weatherForecastPanelElement = document.createElement('div');
   weatherForecastPanelElement.classList.add('weather-panel-content');
 
+  forecastElements = [];
   for (let i = 0; i < 7; i += 1) {
-    weatherForecastPanelElement.appendChild(createWeatherForecastDayInfo());
+    const dayInfo = createWeatherForecastDayInfo();
+    forecastElements.push(dayInfo);
+    weatherForecastPanelElement.appendChild(dayInfo.row);
   }
 
   return weatherForecastPanelElement;
