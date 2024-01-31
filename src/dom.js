@@ -1,13 +1,7 @@
 import searchIconSrc from './search.svg';
 import { publish } from './pubsub';
 import getImage from './weatherPhotosAPI';
-import {
-  delay,
-  fade,
-  fadeOutAndIn,
-  fadeInnerText,
-  fadeBackgroundImage,
-} from './domFade';
+import { delay, fade, fadeInnerText, fadeBackgroundImage } from './domFade';
 
 const degreeSymbol = '\u00B0';
 
@@ -54,18 +48,17 @@ async function fadeForecastRows(fadeDuration, targetOpacity) {
   /* eslint-enable */
 }
 
-function displayWeatherDataFetchError(error) {
+async function displayWeatherDataFetchError(error) {
   if (errorElement.innerText !== error.message) {
-    fadeOutAndIn(errorElement, 0.3, 1, () => {
-      errorElement.innerText = error.message;
-    });
+    await fade(errorElement, 0.3, 0);
+    errorElement.innerText = error.message;
+    fade(errorElement, 0.3, 1);
   }
 }
 
-function clearWeatherDataFetchError() {
-  fadeOutAndIn(errorElement, 0.3, 1, () => {
-    errorElement.innerText = '';
-  });
+async function clearWeatherDataFetchError() {
+  await fade(errorElement, 0.3, 0);
+  errorElement.innerText = '';
 }
 
 function createWeatherPanelSelectButton() {

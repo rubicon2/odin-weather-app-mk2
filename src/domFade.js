@@ -25,11 +25,11 @@ function fade(element, fadeSeconds, targetOpacity) {
   });
 }
 
-async function fadeOutAndIn(element, fadeSeconds, targetOpacity, fn) {
+function fadeInnerText(element, innerText, fadeSeconds = 1, targetOpacity = 1) {
   return new Promise((resolve) => {
     fade(element, fadeSeconds, 0)
       .then(() => {
-        fn();
+        element.innerText = innerText;
       })
       .then(() => {
         fade(element, fadeSeconds, targetOpacity);
@@ -40,24 +40,19 @@ async function fadeOutAndIn(element, fadeSeconds, targetOpacity, fn) {
   });
 }
 
-function fadeInnerText(element, innerText, fadeSeconds = 1, targetOpacity = 1) {
-  return new Promise((resolve) => {
-    fadeOutAndIn(element, fadeSeconds, targetOpacity, () => {
-      element.innerText = innerText;
-    }).then(() => {
-      resolve();
-    });
-  });
-}
-
 function fadeBackgroundImage(element, img, fadeSeconds = 1, targetOpacity = 1) {
   return new Promise((resolve) => {
-    fadeOutAndIn(element, fadeSeconds, targetOpacity, () => {
-      element.style.backgroundImage = `url(${img})`;
-    }).then(() => {
-      resolve();
-    });
+    fade(element, fadeSeconds, 0)
+      .then(() => {
+        element.style.backgroundImage = `url(${img})`;
+      })
+      .then(() => {
+        fade(element, fadeSeconds, targetOpacity);
+      })
+      .then(() => {
+        resolve();
+      });
   });
 }
 
-export { delay, fade, fadeOutAndIn, fadeInnerText, fadeBackgroundImage };
+export { delay, fade, fadeInnerText, fadeBackgroundImage };
