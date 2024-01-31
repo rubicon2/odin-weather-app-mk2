@@ -2,9 +2,7 @@ import { publish } from './pubsub';
 import getImage from './weatherPhotosAPI';
 import { delay, fade, fadeInnerText, fadeBackgroundImage } from './domFade';
 import createSearchBar from './components/searchBar/searchBar';
-import createLocationHeader from './components/locationHeader';
-import createCurrentWeatherPanel from './components/currentWeatherPanel';
-import createWeatherForecastPanel from './components/forecastWeatherPanel';
+import createInfoPanel from './components/infoPanel';
 
 // Store refs to the elements that will update, so we don't have to document.querySelector() every time
 let backgroundElement = null;
@@ -33,30 +31,6 @@ async function displayWeatherDataFetchError(error) {
 async function clearWeatherDataFetchError() {
   await fade(errorElement, 0.3, 0);
   errorElement.innerText = '';
-}
-
-function createInfoPanel() {
-  const infoPanel = document.createElement('div');
-  infoPanel.classList.add('side-panel');
-
-  const locationElement = createLocationHeader();
-  infoPanel.appendChild(locationElement.container);
-  locationNameElement = locationElement.locationNameElement;
-  countryElement = locationElement.countryElement;
-
-  const weatherPanel = document.createElement('div');
-  weatherPanel.classList.add('weather-panel');
-  infoPanel.appendChild(weatherPanel);
-
-  const currentWeather = createCurrentWeatherPanel();
-  currentElements = currentWeather.currentElements;
-  weatherPanel.appendChild(currentWeather.container);
-
-  const weatherForecast = createWeatherForecastPanel();
-  forecastElements = weatherForecast.forecastElements;
-  weatherPanel.appendChild(weatherForecast.container);
-
-  return infoPanel;
 }
 
 function updateLocation() {
@@ -168,7 +142,13 @@ function createWeatherDisplay() {
   weatherDisplay.appendChild(background);
 
   // Info panel - Takes up right side of screen, transparent background, contains text info and graphics
-  weatherDisplay.appendChild(createInfoPanel());
+  const infoPanel = createInfoPanel();
+  locationNameElement = infoPanel.locationNameElement;
+  countryElement = infoPanel.countryElement;
+  currentElements = infoPanel.currentElements;
+  forecastElements = infoPanel.forecastElements;
+
+  weatherDisplay.appendChild(infoPanel.container);
 
   const searchBar = createSearchBar();
   errorElement = searchBar.errorElement;
