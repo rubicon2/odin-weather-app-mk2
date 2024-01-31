@@ -7,10 +7,9 @@ function delay(milliseconds) {
 }
 
 /* eslint-disable no-param-reassign -- the whole point of this method is to update the properties on the element */
-function fade(element, fadeSeconds, targetOpacity, fn) {
+function fade(element, fadeSeconds, targetOpacity) {
   return new Promise((resolve) => {
     function onTransitionEnd() {
-      if (fn) fn();
       this.removeEventListener('transitionend', onTransitionEnd);
       resolve();
     }
