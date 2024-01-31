@@ -325,7 +325,7 @@ async function updateCurrentWeather() {
   currentElements.temperature.info.innerText = Number.parseFloat(
     weatherObject.current.temp_c,
   ).toFixed(1);
-  currentElements.condition.info.src = weatherObject.current.condition;
+  currentElements.condition.info.src = weatherObject.current.icon;
   currentElements.humidity.info.innerText = weatherObject.current.humidity;
   currentElements.wind.info.innerText = weatherObject.current.wind_mph;
   if (selectedPanel === 'current') await fadeCurrentRows(1, 1);

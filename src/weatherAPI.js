@@ -14,7 +14,15 @@ function getCountry(weatherApiDataJson) {
   return weatherApiDataJson.location.country;
 }
 
+function getConditionCode(weatherApiDataJson) {
+  return weatherApiDataJson.current.condition.code;
+}
+
 function getCondition(weatherApiDataJson) {
+  return weatherApiDataJson.current.condition.text;
+}
+
+function getConditionIcon(weatherApiDataJson) {
   return weatherApiDataJson.current.condition.icon;
 }
 
@@ -60,6 +68,7 @@ function extractCurrentWeatherData(weatherApiDataJson) {
   const obj = {};
 
   obj.condition = getCondition(weatherApiDataJson);
+  obj.code = getConditionCode(weatherApiDataJson);
 
   obj.temp_c = getTempC(weatherApiDataJson);
   obj.temp_f = getTempF(weatherApiDataJson);
@@ -86,6 +95,7 @@ function extractForecastDayData(forecastDay) {
   dayData.avgtemp_c = day.avgtemp_c;
   dayData.avgtemp_f = day.avgtemp_f;
   dayData.condition = day.condition.text;
+  dayData.code = day.condition.code;
   dayData.icon = day.condition.icon;
 
   return dayData;
