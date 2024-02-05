@@ -1,5 +1,6 @@
 import { publish } from './pubsub';
 
+// Free version, ok to expose
 const API_KEY = '05220d5fdaf44d4aba591717242201';
 
 function getLocation(weatherApiDataJson) {
