@@ -1,5 +1,7 @@
+https://rubicon2.github.io/odin-weather-app-mk2/
+
 In future projects, be sure to split up the components into their own files/folders. 
-Do NOT load all the dom-related functions into one file as I have done here (dom.js). 
+Do NOT load all the dom-related functions into one file as I originally did (dom.js). 
 It makes the project difficult to navigate and leads to bad designs where things 
 aren't as interoperable as they should be, it is difficult to find what part of 
 the code does what, etc. 
@@ -33,6 +35,7 @@ Lessons:
 - One script file/folder per component.
 - Each function should do exactly one thing.
 - Spend the majority of the time on the focal point of the project, not tangential stuff. Maybe it would be useful to work out a time budget for each feature at the start of the project?
+- Be cognizant of any changes to the availablility of info from the API as the plan changes (in this case, from the pro trial (7 days forecast) to the free version (3 days forecast), and make sure the code can handle it. 
 
 To Do:
 - Go over SOLID design principles (as I clearly didn't practice them very well on this project). Perhaps on the next project, every time I go to write a class or function, refer to the SOLID principles and see if it meets them. 
