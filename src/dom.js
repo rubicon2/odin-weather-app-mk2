@@ -45,7 +45,7 @@ async function fadeCurrentRows(fadeDuration, targetOpacity) {
   await delay(fadeDelay);
   fade(currentElements.humidity.row, fadeDuration, targetOpacity);
   await delay(fadeDelay);
-  fade(currentElements.wind.row, fadeDuration, targetOpacity);
+  await fade(currentElements.wind.row, fadeDuration, targetOpacity);
 }
 
 async function fadeForecastRows(
