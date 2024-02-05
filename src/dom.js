@@ -48,9 +48,14 @@ async function fadeCurrentRows(fadeDuration, targetOpacity) {
   fade(currentElements.wind.row, fadeDuration, targetOpacity);
 }
 
-async function fadeForecastRows(fadeDuration, targetOpacity) {
+async function fadeForecastRows(
+  forecastDaysCount,
+  fadeDuration,
+  targetOpacity,
+) {
   /* eslint-disable -- stop whining */
-  for (let forecastElement of forecastElements) {
+  for (let i = 0; i < forecastDaysCount; i += 1) {
+    const forecastElement = forecastElements[i];
     fade(forecastElement.row, fadeDuration, targetOpacity);
     await delay(fadeDelay);
   }
@@ -58,8 +63,17 @@ async function fadeForecastRows(fadeDuration, targetOpacity) {
 }
 
 async function updateForecast() {
-  await fadeForecastRows(1, 0);
-  for (let i = 0; i < forecastElements.length; i += 1) {
+  // Make sure rows are invisible before changing any content
+  await fadeForecastRows(forecastElements.length, 1, 0);
+  // Make sure this does not exceed the number of forecastElements
+  const forecastDaysCount = Math.min(
+    weatherObject.forecast.length,
+    forecastElements.length,
+  );
+  // So data will be updated and row faded in only if there is an available element on the forecast
+  // Free plan - 3 day forecast
+  // Pro plan - 7 day forecast
+  for (let i = 0; i < forecastDaysCount; i += 1) {
     const dayElements = forecastElements[i];
     const dayForecast = weatherObject.forecast[i];
     if (i === 0) dayForecast.name = 'Today';
@@ -70,7 +84,10 @@ async function updateForecast() {
     ).toFixed(1);
     dayElements.condition.src = dayForecast.icon;
   }
-  if (selectedPanel === 'forecast') await fadeForecastRows(1, 1);
+  // If forecastPanel is currently being viewed, fade the rows back in
+  if (selectedPanel === 'forecast') {
+    await fadeForecastRows(forecastDaysCount, 1, 1);
+  }
 }
 
 async function showForecastPanel() {
@@ -105,7 +122,7 @@ async function showCurrentPanel() {
   if (!isPanelFadeHappening) {
     selectedPanel = 'current';
     isPanelFadeHappening = true;
-    await fadeForecastRows(1, 0);
+    await fadeForecastRows(forecastElements.length, 1, 0);
     updateCurrentWeather(weatherObject);
     isPanelFadeHappening = false;
   }
