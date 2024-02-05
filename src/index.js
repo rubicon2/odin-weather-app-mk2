@@ -32,6 +32,6 @@ subscribe('onWeatherDataFetchError', () => {
 subscribe('onLocationSubmit', fetchWeatherData);
 subscribe('onWeatherDataFetchSuccess', updateWeatherDisplay);
 subscribe('onWeatherDataFetchError', displayWeatherDataFetchError);
-publish('onLocationSubmit', 'Sapporo');
 
+publish('onLocationSubmit', 'Sapporo');
 showForecastPanel();
